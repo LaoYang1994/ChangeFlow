@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "description": "Repo-native change workflow and documentation system for AI-assisted engineering. Works with Claude Code and Codex.",
   "author": {
-    "name": "Hongyang Lee",
-    "email": "hongyangleechina@gmail.com"
+    "name": "LaoYang1994",
+    "email": "lhy_ustb@pku.edu.cn"
   },
   "keywords": ["workflow", "documentation", "change-management", "repo-native", "codex", "agents"],
   "license": "MIT"
