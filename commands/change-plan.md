@@ -12,8 +12,9 @@ Target change-id (optional): $ARGUMENTS
 2. Read `design.md`.
 3. Read relevant project files.
 4. Read `docs/CONTRACTS.md` if applicable.
-5. Produce a concrete implementation plan.
-6. Write/update `plan.md` using the template below. There is no separate `tasks.md` — tasks live inside `plan.md`.
+5. If other active changes exist, glance at their `plan.md` "Files to change" and **warn** if this plan is likely to overlap.
+6. Produce a concrete implementation plan.
+7. Write/update `plan.md` using the template below. There is no separate `tasks.md` — tasks live inside `plan.md`.
 
 ## Rules
 - `plan.md` is the source of truth for implementation.

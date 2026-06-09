@@ -20,13 +20,13 @@ Required for changes involving correctness, performance, CUDA, TensorRT, metrics
 - For performance-sensitive work, include baseline and candidate numbers where available.
 
 ## validation.md template
-```markdown
+````markdown
 # Validation
 
 ## Commands
-​```bash
+```bash
 # commands executed
-​```
+```
 
 ## Results
 Summary of test results.
@@ -39,4 +39,4 @@ Manual validation steps and results.
 
 ## Known gaps
 What was not validated and why.
-```
+````

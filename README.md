@@ -68,10 +68,10 @@ on your own" guard.
 
 ## Keeping Codex in sync
 
-`commands/*.md` is the single source of truth. Regenerate the Codex skills with:
+`commands/*.md` is the single source of truth. `/changeflow-init` generates the
+Codex skills but never overwrites existing ones. After editing a command,
+regenerate with `--force`:
 
 ```
-python3 scripts/sync-codex.py commands <target-repo>/.codex/skills
+python3 scripts/sync-codex.py commands <target-repo>/.codex/skills --force
 ```
-
-`/changeflow-init` runs this for you.
