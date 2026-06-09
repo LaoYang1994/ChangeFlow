@@ -1,35 +1,36 @@
 ---
-description: Turn a frozen design into a concrete implementation plan and task checklist in plan.md.
+description: Use when the user explicitly turns a frozen design into an implementation plan + task checklist (plan.md). Human-initiated.
 argument-hint: "[change-id]"
 ---
 
-Run the ChangeFlow **change-plan** workflow.
+Run the ChangeFlow **change-plan** workflow. Open with: "Running change-plan for …".
 
 Target change-id (optional): $ARGUMENTS
 
-## Steps
-1. Locate the active change. If a change-id is given, use it. If omitted: one active change → use it; multiple → list them and ask which.
-2. Read `design.md`.
-3. Read relevant project files.
-4. Read `docs/CONTRACTS.md` if applicable.
-5. If other active changes exist, glance at their `plan.md` "Files to change" and **warn** if this plan is likely to overlap.
-6. Produce a concrete implementation plan.
-7. Write/update `plan.md` using the template below. There is no separate `tasks.md` — tasks live inside `plan.md`.
+Write the plan for a **zero-context engineer**: assume they don't know this repo. Every task names the exact file(s) and is one action they could do in a few minutes.
 
-## Rules
-- `plan.md` is the source of truth for implementation.
-- Update task checkboxes as work progresses.
-- If planning reveals a design change, update `design.md` first.
-- Impact fields use a single `none | <details>` line, never Yes/No checkboxes.
+## Steps
+1. Locate the active change. Id given → use it. Omitted → one active change → use it; multiple → list them and ask which.
+2. Read `design.md`; read relevant project files and `docs/CONTRACTS.md` if applicable.
+3. If other active changes exist, glance at their `plan.md` "Files to change" and **warn** on likely overlap.
+4. Write/update `plan.md` using the template. Tasks live inside `plan.md` — there is no `tasks.md`.
+
+## Rules (rule — why)
+- `plan.md` is the source of truth for implementation — keep it accurate as work proceeds, not as an after-the-fact record.
+- Each task has a stable ID (`T1`, `T2`, …) and a file path — IDs let `change-implement`/`change-review` reference tasks across edits without renumbering; the path makes the task executable.
+- One action per task — a task that bundles several actions invites silent skipping.
+- If planning reveals the design is wrong, update `design.md` first — don't plan around a broken design.
+- Impact fields are one `none | <details>` line, never Yes/No.
+
+**Next:** `/change-implement` — nothing else.
 
 ## plan.md template
 ```markdown
 # Plan
 
 ## Implementation steps
-- [ ] Step 1
-- [ ] Step 2
-- [ ] Step 3
+- [ ] T1 — <one concrete action> · `path/to/file`
+- [ ] T2 — <one concrete action> · `path/to/other_file`
 
 ## Files to change
 - `path/to/file`: planned change

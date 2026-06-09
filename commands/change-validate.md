@@ -1,23 +1,35 @@
 ---
-description: Record test, benchmark, and manual validation results with evidence in validation.md.
+description: Use when the user explicitly records test, benchmark, or manual validation evidence for a change (validation.md). Human-initiated.
 argument-hint: "[change-id]"
 ---
 
-Run the ChangeFlow **change-validate** workflow.
+Run the ChangeFlow **change-validate** workflow. Open with: "Running change-validate for …".
 
 Target change-id (optional): $ARGUMENTS
 
-Required for changes involving correctness, performance, CUDA, TensorRT, metrics, benchmark behavior, data alignment, public API/data contracts, or production/release-sensitive behavior. Optional for small documentation-only or trivial code changes.
+> **IRON LAW: NO "VALIDATED" CLAIM WITHOUT FRESH EVIDENCE IN THIS RUN.**
+> Claiming validation without running it is dishonesty, not efficiency. Violating the letter is violating the spirit.
 
-## Steps
-1. Locate the active change. If a change-id is given, use it. If omitted: one active change → use it; multiple → list them and ask which.
-2. Run the relevant tests/benchmarks/manual checks.
-3. Write/update `validation.md` using the template below.
+Required for changes touching correctness, performance, CUDA, TensorRT, metrics, benchmarks, data alignment, public API/data contracts, or release-sensitive behavior. Optional for trivial/doc-only changes.
 
-## Rules
-- Do not claim validation without evidence.
-- Record failed commands as well as successful ones.
-- For performance-sensitive work, include baseline and candidate numbers where available.
+## Gate (in order, never skip a step)
+1. **IDENTIFY** the command that would prove each claim.
+2. **RUN** it fresh — re-run after any edit; an earlier run proves nothing.
+3. **READ + PASTE** the real output: exit code, pass/fail counts, numbers.
+4. **Only then** record it as validated.
+
+| Claim | Requires | Not enough |
+|---|---|---|
+| tests pass | command output, 0 failures | "should pass" / an earlier run |
+| faster | before + after numbers | "feels faster" |
+| metric correct | the actual metric value | code changed, assumed fixed |
+
+## Rules (rule — why)
+- A failed command is evidence too — record it; hiding failures defeats the point.
+- Missing metric ≠ 0 (per `CONTRACTS.md`) — treat absent values as absent, not zero.
+- Note what you did **not** validate under "Known gaps" — silent omissions read as full coverage.
+
+**Next:** `/change-archive`.
 
 ## validation.md template
 ````markdown
@@ -25,14 +37,14 @@ Required for changes involving correctness, performance, CUDA, TensorRT, metrics
 
 ## Commands
 ```bash
-# commands executed
+# exact commands executed
 ```
 
 ## Results
-Summary of test results.
+Summary of test results (counts, exit codes).
 
 ## Benchmark
-Performance numbers, if applicable.
+Baseline vs candidate numbers, if applicable.
 
 ## Manual checks
 Manual validation steps and results.

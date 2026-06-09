@@ -1,33 +1,35 @@
 ---
-description: Global GC for the documentation system — detect drift and cleanup opportunities, then report or propose edits.
+description: Use when the user explicitly checks the docs for drift/cleanup, or at a milestone (before a release, after a batch of changes archived). Global GC for the documentation system.
 argument-hint: "[--apply]"
 ---
 
-Run the ChangeFlow **docs-refresh** workflow.
+Run the ChangeFlow **docs-refresh** workflow. Open with: "Running docs-refresh …".
 
 Options (optional): $ARGUMENTS
 
-This is the global GC for the documentation system. It does not run on a cron and does not auto-mutate by default. Trigger it reactively (when you trip over drift) or at milestones (before a release, after a batch of changes is archived).
+Global GC for the documentation system. It does not run on a cron and does not auto-mutate. Trigger it reactively (you trip over drift) or at a milestone. By default **report**; only edit directly when invoked with `--apply`.
 
-## Inspect
-`AGENTS.md`, `CLAUDE.md`, `docs/PROJECT.md`, `docs/CONCEPTS.md`, `docs/CONTRACTS.md`, `docs/changes/active/`, `docs/changes/archive/`, `docs/experiences/`.
+## Method — verify against reality, don't trust prose
+For each durable claim, **check it against the code/repo** (e.g. `grep` for the referenced symbol/file). A claim you didn't verify is `unverified`, not `accurate`. Inspect `AGENTS.md`, `CLAUDE.md`, `docs/PROJECT.md`, `docs/CONCEPTS.md`, `docs/CONTRACTS.md`, `docs/changes/active/`, `docs/changes/archive/`, `docs/experiences/`.
 
 ## Checks
-- Active changes that appear stale.
-- Archived changes that did not update long-term docs.
-- Repeated or conflicting experiences (and candidates to promote to test/hook/contract, or merge/prune).
-- Overgrown `AGENTS.md`.
-- Outdated contracts.
-- Missing project feature updates.
-- Terms used in docs but missing from `CONCEPTS.md`.
-- Random markdown files outside the approved structure.
+- **Stale:** a doc references code/files that changed or no longer exist.
+- **Contradiction:** two docs (or a doc and the code) disagree.
+- **Discoverability:** durable docs are reachable from `AGENTS.md`/`PROJECT.md`.
+- Active changes that look abandoned; archived changes that never updated durable docs.
+- Repeated/conflicting experiences (candidates to merge, prune, or graduate to test/hook/contract).
+- Terms used in docs but missing from `CONCEPTS.md`; random `.md` outside the structure.
 
-## Output
-Produce the report below. Only edit files directly if invoked with `--apply`; otherwise propose edits.
+## Rules (rule — why)
+- Don't delete stale-but-historical content — move it into an "old patterns" `<details>` block; deleting context loses the "why".
+- Edit durable docs in place, idempotently — never regenerate wholesale (same discipline as `change-archive`).
+- Auto-apply only factual corrections (with `--apply`); **ask** before structural/narrative changes — one question per change.
+- Report "no drift found" explicitly when clean — a visible no-result is the audit signal.
 
+## Output (report)
 ```markdown
 # Docs Refresh Report
-## Summary
+## Summary            (or "no drift found")
 ## Stale active changes
 ## Contract drift
 ## Project feature drift
