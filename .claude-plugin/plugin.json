@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "changeflow",
+  "displayName": "ChangeFlow",
+  "version": "0.1.0",
+  "description": "Repo-native change workflow and documentation system for AI-assisted engineering. Works with Claude Code and Codex.",
+  "author": {
+    "name": "Hongyang Lee",
+    "email": "hongyangleechina@gmail.com"
+  },
+  "keywords": ["workflow", "documentation", "change-management", "repo-native", "codex", "agents"],
+  "license": "MIT"
+}
