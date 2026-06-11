@@ -1,28 +1,30 @@
 ---
-description: Use when the user explicitly captures a reusable engineering lesson, or when you notice a recurring/durable lesson worth recording. Records to docs/experiences/, or graduates the lesson to a test/hook/contract.
-argument-hint: <what was learned>
+description: Use when the user captures a reusable engineering lesson or a recurring procedure, or when you notice one worth recording. Lessons go to docs/experiences/; step-by-step procedures go to docs/workflows/; enforceable rules graduate to a test/hook/contract.
+argument-hint: <what was learned or the procedure>
 ---
 
 Run the ChangeFlow **experience-capture** workflow. Open with: "Running experience-capture …".
 
-Lesson from the user (may be empty): $ARGUMENTS
+Input from the user (may be empty): $ARGUMENTS
 
-For repeated bugs, debugging patterns, performance pitfalls, CUDA/TensorRT gotchas, benchmark/alignment lessons, review or release lessons.
-
-## Should I record this?
-Only if it's a **reusable rule**, not a one-off: *would this save a future session time, on this or another project?* If no, don't write it. If it's enforceable, graduate it instead (below).
+## Should I record this, and where?
+- Only if it is **reusable**, not a one-off: *would this save a future session time, here or on another project?* If no, don't write it.
+- **Lesson / pitfall / root-cause** ("we hit X, the rule is Y") → `docs/experiences/<domain>/<slug>.md`.
+- **Recurring procedure** ("to do X: first A, then B") → `docs/workflows/<slug>.md`.
+- **Enforceable rule** → graduate instead: write a test/hook, or promote to `docs/CONTRACTS.md`; then down-reference or omit.
 
 ## Steps
-1. **Search `docs/experiences/` first.** If a near-match exists, **update it** — two docs on the same lesson inevitably drift apart. Record the search outcome even when nothing matched (a visible "no existing match" note is the audit signal; don't silently skip).
-2. **Graduate, if possible:** enforceable → write a **test or hook** and down-reference/omit the experience; stable hard rule → promote to `docs/CONTRACTS.md`. Experiences are a holding pen, not a resting place.
-3. Otherwise write/update `docs/experiences/<domain>/<slug>.md` from the template.
+1. **Search first** in the matching directory. If a near-match exists, **update it** — duplicates drift apart. Record the search outcome even when nothing matched (a visible "no existing match" note is the audit signal; don't silently skip).
+2. Decide lesson vs procedure vs graduate (above).
+3. Write/update the file from the matching template below.
 
 ## Rules (rule — why)
-- Capture the **reusable rule, not the war story** — "In session X we found…" is a narrative no future session can apply; write the trigger and the rule instead.
-- No task summaries, implementation diaries, or unverified guesses — the layer is for durable, verified knowledge.
+- Capture the **reusable rule or procedure, not the war story** — "In session X we…" is a narrative no future session can apply.
+- No task summaries or unverified guesses — the durable layer is for verified, reusable knowledge.
 - Reference related changes by **ID**, never by `active/`/`archive/` path — so the link survives archival.
+- Experiences and workflows are living docs — prune or merge when superseded; graduate to test/hook/contract when a lesson becomes enforceable.
 
-## experience template
+## experience template (docs/experiences/<domain>/<slug>.md)
 ```markdown
 # <Experience Title>
 
@@ -49,4 +51,26 @@ Common mistakes.
 
 ## Related contracts
 - `docs/CONTRACTS.md#...`
+```
+
+## workflow template (docs/workflows/<slug>.md)
+```markdown
+# <Workflow Title>
+
+## Purpose
+The recurring task this procedure accomplishes.
+
+## When to use
+The trigger/situation where an agent should follow this.
+
+## Steps
+1. <one action>
+2. <one action>
+
+## Gotchas
+What bites if you skip, reorder, or rush a step.
+
+## Related
+- Contracts: `docs/CONTRACTS.md#...`
+- Experiences: `docs/experiences/...`
 ```

@@ -34,7 +34,7 @@ copy_if_missing() {
 echo "ChangeFlow init -> $TARGET"
 
 echo "[dirs]"
-for d in docs docs/changes/active docs/changes/archive docs/experiences; do
+for d in docs docs/changes/active docs/changes/archive docs/experiences docs/workflows; do
   mkdir -p "$TARGET/$d"
   echo "  ensure: $d/"
 done

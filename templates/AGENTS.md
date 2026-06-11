@@ -7,6 +7,8 @@ Before starting work, read:
 3. `docs/CONTRACTS.md` before changing data formats, APIs, metric semantics,
    tensor layouts, alignment logic, or config schemas
 4. `docs/experiences/` for relevant distilled lessons
+5. `docs/workflows/` before a recurring multi-step task — if an established
+   procedure matches, follow it instead of improvising
 
 Do not blind-search `docs/changes/archive/`. Read an archived change only when a
 durable doc links to it by ID, or when investigating a regression the durable
@@ -19,10 +21,11 @@ Do not create random markdown files. Use only these locations:
 - `docs/CONCEPTS.md`: stable domain vocabulary
 - `docs/CONTRACTS.md`: stable contracts and hard rules (a living document — add
   rules whenever you discover the need, no active change required)
+- `docs/workflows/`: reusable step-by-step procedures for recurring tasks
+  ("to do X, first A then B") — one file per procedure
 - `docs/changes/active/<YYYY-MM-DD>-<slug>/`: active changes
 - `docs/changes/archive/<YYYY-MM-DD>-<slug>/`: completed changes (immutable)
-- `docs/experiences/`: reusable lessons, pitfalls, debugging notes, workflow
-  experience
+- `docs/experiences/`: reusable lessons, pitfalls, debugging notes
 
 ## When to open a change
 - A change is human-initiated. Only open a change folder when a `/change-*`
@@ -48,7 +51,8 @@ For a tracked change:
    CUDA/TensorRT, data alignment, or benchmark changes; record commands,
    results, benchmark numbers, manual checks, and known gaps in `validation.md`.
 6. `/change-archive` — move the active change folder to archive; update
-   `PROJECT.md`, `CONTRACTS.md`, `CONCEPTS.md`, and `experiences/` when needed.
+   `PROJECT.md`, `CONTRACTS.md`, `CONCEPTS.md`, `experiences/`, and `workflows/`
+   when needed.
 
 Every `/change-*` command takes an optional change-id. If omitted: one active
 change → use it; multiple → ask which.
@@ -60,18 +64,19 @@ After tracked work, extract only durable learnings. Prefer this order:
 2. Update `docs/CONTRACTS.md` when a stable hard rule changed.
 3. Add or update `docs/experiences/` when a reusable debugging or implementation
    pattern was learned. Experiences are a holding pen: search before writing,
-   update near-matches instead of duplicating, and graduate or prune them over
-   time.
-4. Update `docs/CONCEPTS.md` only for stable project vocabulary.
-5. Update this file only for short, stable, high-frequency rules.
+   update near-matches instead of duplicating, and graduate or prune over time.
+4. Add or update `docs/workflows/` when a recurring multi-step procedure is
+   worth following next time (a how-to, not a lesson).
+5. Update `docs/CONCEPTS.md` only for stable project vocabulary.
+6. Update this file only for short, stable, high-frequency rules.
 
 Do not write task summaries, implementation diaries, chat logs, or unverified
 ideas into long-term docs.
 
 ## Drift
 Suggest `/docs-refresh` when you notice drift (random docs, conflicting
-experiences, stale active changes, missing concepts). Run it at milestones
-(before a release, after a batch of changes lands).
+experiences or workflows, stale active changes, missing concepts). Run it at
+milestones (before a release, after a batch of changes lands).
 
 ## Critical rules
 <!-- Replace these examples with your project's hard rules, or move enforceable

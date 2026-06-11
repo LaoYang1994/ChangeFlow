@@ -1,0 +1,18 @@
+{
+  "name": "laoyang1994",
+  "metadata": {
+    "description": "LaoYang1994's plugin catalog — currently ships ChangeFlow, a repo-native change workflow and documentation system for AI-assisted engineering."
+  },
+  "owner": {
+    "name": "LaoYang1994",
+    "email": "lhy_ustb@pku.edu.cn"
+  },
+  "plugins": [
+    {
+      "name": "changeflow",
+      "source": "./",
+      "description": "Repo-native change workflow and documentation system for AI-assisted engineering. Works with Claude Code and Codex.",
+      "version": "0.1.0"
+    }
+  ]
+}
