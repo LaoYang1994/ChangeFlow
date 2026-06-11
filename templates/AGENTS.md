@@ -62,6 +62,13 @@ worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`);
 `/change-archive` offers to remove it. ChangeFlow only creates/removes worktrees
 — it never commits, merges, or pushes. Change docs always stay in the main tree.
 
+## Entering implementation is human-triggered
+Do not slide into the implement phase on your own. After design/plan — even if
+the user approves the plan or asks for tweaks — do NOT start writing or changing
+project code. Revising `design.md`/`plan.md` per feedback is fine; writing code
+requires the user to explicitly start implementation (run `/change-implement`).
+That step is also where the worktree choice is offered, so skipping it skips that.
+
 ## Discuss before modifying
 When the user is designing or deciding something, settle the design and get
 explicit approval before editing files. A directional "yes" confirms the
