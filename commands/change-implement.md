@@ -30,7 +30,7 @@ ChangeFlow only creates the worktree; it never commits, merges, or pushes. Remov
 - Do not implement unplanned features — if it's not in the plan, it's scope creep; add it to the plan (and design if needed) first.
 - A task is DONE only when its actual artifact exists — code that *handles* a deliverable is not the deliverable; when unsure, leave it unchecked.
 - Do not silently change a stable contract — if the work forces a `CONTRACTS.md` change, surface it; you're likely also editing the code that contract governs.
-- Do not skip required tests, and do not mark a task done on an unverified assumption.
+- Write the change's committed/automated tests here — they are part of the implementation. Don't skip required tests, and don't mark a task done on an unverified assumption. (Running them and recording the *evidence* is `/change-validate`.)
 - **3-strike rule:** if the same task fails 3 times, or each fix breaks another task, STOP — the design or plan is probably wrong. Surface it; don't attempt fix #4.
 
 **Next:** `/change-review` — nothing else.

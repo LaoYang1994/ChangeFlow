@@ -12,6 +12,8 @@ Target change-id (optional): $ARGUMENTS
 
 Required for changes touching correctness, performance, CUDA, TensorRT, metrics, benchmarks, data alignment, public API/data contracts, or release-sensitive behavior. Optional for trivial/doc-only changes.
 
+**Scope:** this command records the *evidence of running* tests, plus one-off / manual / benchmark checks. **Committed, automated tests are written during `/change-implement`** (they're part of the implementation) — not here.
+
 ## Gate (in order, never skip a step)
 1. **IDENTIFY** the command that would prove each claim.
 2. **RUN** it fresh — re-run after any edit; an earlier run proves nothing.

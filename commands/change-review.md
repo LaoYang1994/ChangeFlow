@@ -12,9 +12,15 @@ Target change-id (optional): $ARGUMENTS
 ## Steps (do in order — don't propose fixes while still reading)
 1. Locate the active change (id given → use it; omitted → one active → use it; multiple → ask which).
 2. **Read** the diff/code against `design.md`, `plan.md`, and `docs/CONTRACTS.md`.
-3. **Coverage check.** Does the implementation match the frozen design? Does every `plan.md` task trace to real work, and every design decision to a task? Report `CLEAN` / `DRIFT (built beyond design)` / `MISSING (design point not implemented)`.
-4. **Classify** findings into the format below.
-5. Write/update `review.md`, then give a **verdict**: `ready-to-archive` / `archive-with-fixes` / `not-ready`.
+3. **Large-file guard.** Flag any added/changed file over ~1 MB (or a stray binary blob):
+   ```bash
+   { git diff --name-only HEAD; git ls-files --others --exclude-standard; } 2>/dev/null | sort -u \
+     | while read -r f; do [ -f "$f" ] && s=$(wc -c <"$f") && [ "$s" -gt 1048576 ] && printf 'LARGE %s (%s bytes)\n' "$f" "$s"; done
+   ```
+   Any output → record as **P1** (don't let a stray fixture/blob into git). For a legitimately large asset, accept the finding or move it to Git LFS.
+4. **Coverage check.** Does the implementation match the frozen design? Does every `plan.md` task trace to real work, and every design decision to a task? Report `CLEAN` / `DRIFT (built beyond design)` / `MISSING (design point not implemented)`.
+5. **Classify** findings into the format below.
+6. Write/update `review.md`, then give a **verdict**: `ready-to-archive` / `archive-with-fixes` / `not-ready`.
 
 ## Finding format & evidence
 `[P1|P2|P3] (confidence N/10) file:line — problem → concrete fix`

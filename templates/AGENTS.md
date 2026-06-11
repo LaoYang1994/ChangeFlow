@@ -27,6 +27,11 @@ Do not create random markdown files. Use only these locations:
 - `docs/changes/archive/<YYYY-MM-DD>-<slug>/`: completed changes (immutable)
 - `docs/experiences/`: reusable lessons, pitfalls, debugging notes, listed in `INDEX.md`
 
+Do not run markdown auto-formatters (mdformat, prettier) over `docs/changes/` —
+`plan.md`'s task checkboxes are a state machine; reformatting reorders/corrupts
+them. Exclude `docs/changes/` in your formatter / pre-commit config, and toggle a
+box by matching its stable `T#`, not by position.
+
 ## When to open a change
 - A change is human-initiated. Only open a change folder when a `/change-*`
   command is invoked. Never create one on your own.

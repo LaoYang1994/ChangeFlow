@@ -21,6 +21,7 @@ Write the plan for a **zero-context engineer**: assume they don't know this repo
 - One action per task — a task that bundles several actions invites silent skipping.
 - If planning reveals the design is wrong, update `design.md` first — don't plan around a broken design.
 - Impact fields are one `none | <details>` line, never Yes/No.
+- Don't let an auto-formatter touch `plan.md` — its checkboxes are state, not prose; exclude `docs/changes/` from mdformat/prettier, and toggle a box by matching its stable `T#`, not by position.
 
 **Next:** the **user** runs `/change-implement`. Stop here — don't start writing code on your own, even if the user approves the plan or asks for tweaks (revising the plan is fine; entering implementation is human-triggered).
 

@@ -159,6 +159,28 @@ uses that, with several it asks which.
 
 ---
 
+## Optional: block large files before commit
+
+`/change-review` flags added/changed files over ~1 MB as P1. To hard-block them
+at commit time, install this opt-in pre-commit hook:
+
+```bash
+cat > .git/hooks/pre-commit <<'EOF'
+#!/usr/bin/env bash
+# Block staged files larger than 1 MB. Override with: git commit --no-verify
+fail=0
+while read -r f; do
+  [ -f "$f" ] || continue
+  s=$(wc -c <"$f")
+  [ "$s" -gt 1048576 ] && { echo "blocked (>1MB): $f ($s bytes)"; fail=1; }
+done < <(git diff --cached --name-only)
+[ "$fail" = 0 ] || { echo "Large file(s) staged — use 'git commit --no-verify' to override, or Git LFS."; exit 1; }
+EOF
+chmod +x .git/hooks/pre-commit
+```
+
+---
+
 ## How it stays tool-agnostic
 
 `commands/*.md` is the single source of truth. The Codex skills under

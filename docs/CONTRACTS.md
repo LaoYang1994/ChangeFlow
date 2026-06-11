@@ -42,6 +42,11 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
   order (forensic/pointer-only).
 - `claude plugin validate . --strict` must pass before committing. If
   `plugin.json` and the marketplace entry both set `version`, they must agree.
+- Don't run markdown auto-formatters (mdformat/prettier) over `docs/changes/` —
+  `plan.md` checkboxes are a state machine; reformatting corrupts them.
+- No file larger than ~1 MB enters git without explicit human acceptance —
+  `change-review` flags added/changed files > 1 MB (and stray binaries) as P1;
+  optionally enforce with the pre-commit hook in the README. Legit large assets → Git LFS.
 
 ## Process
 ### Rules
