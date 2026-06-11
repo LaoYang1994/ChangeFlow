@@ -11,5 +11,8 @@ Thumbs.db
 .vscode/
 *.swp
 
+# Per-change git worktrees (created opt-in by /change-implement)
+.worktrees/
+
 # Local-only design doc (not published)
 ChangeFlow-Design-v2.md

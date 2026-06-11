@@ -146,7 +146,7 @@ repo/
 | `/changeflow-init` | Scaffold the structure; on an existing repo, draft `PROJECT.md` from the code. |
 | `/change-design` | Clarify requirements, confirm scope, freeze a design → `design.md`. |
 | `/change-plan` | Turn the design into a task checklist (stable IDs + file paths) → `plan.md`. |
-| `/change-implement` | Implement strictly per the plan; stops if there is no frozen design + plan. |
+| `/change-implement` | Implement strictly per the plan; stops if there is no frozen design + plan. Asks whether to isolate the code in a git worktree (`.worktrees/<id>/`). |
 | `/change-review` | Self-review against design/plan/contracts → `review.md` (P1/P2/P3 + verdict). |
 | `/change-validate` | Record real test/benchmark evidence → `validation.md` (no claim without fresh output). |
 | `/change-archive` | Update durable docs, then move the change `active/ → archive/`. |

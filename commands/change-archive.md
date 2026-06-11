@@ -21,6 +21,7 @@ Target change-id (optional): $ARGUMENTS
    - `docs/experiences/` — only a genuinely reusable lesson (see `/experience-capture`).
 5. **Rewrite stray references** (exact sequence): `grep` the repo for `active/<slug>` path references to this change and rewrite them to `archive/<slug>`. (Well-behaved references use the change ID, not the path.)
 6. Move the folder from `docs/changes/active/<change>/` to `docs/changes/archive/<change>/`.
+7. If a worktree `.worktrees/<change>/` exists for this change, **ask** whether to `git worktree remove` it — don't delete the branch, and don't force-remove if it has uncommitted changes.
 
 ## Archive checklist
 ```markdown
@@ -30,6 +31,7 @@ Target change-id (optional): $ARGUMENTS
 - [ ] PROJECT.md / CONTRACTS.md / CONCEPTS.md / experiences/ updated in place (idempotent) if needed.
 - [ ] Stray active/<slug> path references rewritten to archive/<slug>.
 - [ ] Folder moved active → archive.
+- [ ] Worktree (if any) removal offered.
 ```
 
 ## Rules (rule — why)

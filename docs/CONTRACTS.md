@@ -45,6 +45,11 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
 
 ## Process
 ### Rules
-- ChangeFlow does not manage commits/PRs/review tools — that's the user's VCS
-  workflow. Agents don't perform VCS actions in `change-*` commands.
+- ChangeFlow does not manage commits, merges, PRs, or review tools — that's the
+  user's VCS workflow. **One carved-out exception:** `change-implement` may create
+  a per-change git worktree (`.worktrees/<change-id>/`, branch `change/<change-id>`)
+  and `change-archive` may remove it — both opt-in via an explicit ask, never
+  silent. It still never commits, merges, or pushes; change docs always stay in
+  the main tree.
+- `.worktrees/` is git-ignored.
 - **Never push to the remote without explicit, per-action user permission.**

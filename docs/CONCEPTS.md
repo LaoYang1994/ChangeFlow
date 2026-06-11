@@ -61,3 +61,10 @@ it) and appends an explicit-invocation hint to `change-*` skills.
 `AGENTS.md` = tool-agnostic always-on instructions (read by Codex natively).
 `CLAUDE.md` = Claude Code's file; it `@AGENTS.md`-imports rather than duplicates,
 plus Claude-specific bits.
+
+## worktree (per change)
+Optional code isolation: at `change-implement` the agent asks whether to work in a
+new git worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`) or on
+the current branch. Change docs stay in the main tree (so `active/` and multiple
+concurrent changes keep working); only code is isolated. The one VCS action
+ChangeFlow takes — it never commits, merges, or pushes.

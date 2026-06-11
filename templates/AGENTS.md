@@ -57,6 +57,17 @@ For a tracked change:
 Every `/change-*` command takes an optional change-id. If omitted: one active
 change → use it; multiple → ask which.
 
+`/change-implement` may, if you choose, isolate a change's code work in a git
+worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`);
+`/change-archive` offers to remove it. ChangeFlow only creates/removes worktrees
+— it never commits, merges, or pushes. Change docs always stay in the main tree.
+
+## Discuss before modifying
+When the user is designing or deciding something, settle the design and get
+explicit approval before editing files. A directional "yes" confirms the
+*direction*, not approval to implement — especially when the change would reverse
+a prior decision or a contract. Discuss to clarity first, then modify.
+
 ## Durable knowledge rules
 After tracked work, extract only durable learnings. Prefer this order:
 1. Add or update a **test or hook** when the lesson can be enforced

@@ -13,6 +13,13 @@ Target change-id (optional): $ARGUMENTS
 ## Pre-gate
 Confirm `design.md` and `plan.md` exist for this change. If either is missing or the design clearly isn't frozen, STOP and suggest `/change-design` or `/change-plan` — do not start coding.
 
+## Where to work (ask once)
+Before writing code, ask the user: **"Isolate this change in a git worktree, or work on the current branch?"** — unless a worktree for it already exists (then use it; don't re-ask).
+- **Current branch** (default if they decline): implement here.
+- **New worktree:** `git worktree add .worktrees/<change-id> -b change/<change-id>` (omit `-b` if the branch exists); ensure `.worktrees/` is in `.gitignore`; do the code work there. The change docs stay in the main tree — read `design.md`/`plan.md` from there; don't expect them inside the worktree.
+
+ChangeFlow only creates the worktree; it never commits, merges, or pushes. Removal is offered at `/change-archive`.
+
 ## Steps
 1. Locate the active change (id given → use it; omitted → one active → use it; multiple → ask which).
 2. Read `design.md`, then `plan.md`.
