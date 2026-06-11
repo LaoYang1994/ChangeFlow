@@ -48,6 +48,9 @@ long-term references, not to the change folder.
 For a tracked change:
 1. `/change-design` — clarify requirements; create/update `design.md`.
 2. `/change-plan` — create/update `plan.md` with steps and task checklist.
+   - (optional, non-trivial changes) `/change-plan-review` — confront design +
+     plan with the real code/data + contracts *before* implementing; fold fixes
+     back into design/plan.
 3. `/change-implement` — implement according to `plan.md`; keep checklist
    updated.
 4. `/change-review` — review against `design.md`, `plan.md`, `CONTRACTS.md`;

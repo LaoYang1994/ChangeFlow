@@ -23,7 +23,7 @@ Write the plan for a **zero-context engineer**: assume they don't know this repo
 - Impact fields are one `none | <details>` line, never Yes/No.
 - Don't let an auto-formatter touch `plan.md` — its checkboxes are state, not prose; exclude `docs/changes/` from mdformat/prettier, and toggle a box by matching its stable `T#`, not by position.
 
-**Next:** the **user** runs `/change-implement`. Stop here — don't start writing code on your own, even if the user approves the plan or asks for tweaks (revising the plan is fine; entering implementation is human-triggered).
+**Next:** for a non-trivial change, the **user** may first run `/change-plan-review` (pre-build gate). Then the **user** runs `/change-implement`. Stop here — don't start writing code on your own, even if the user approves the plan or asks for tweaks (revising the plan is fine; entering implementation is human-triggered).
 
 ## plan.md template
 ```markdown

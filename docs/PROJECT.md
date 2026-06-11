@@ -31,6 +31,9 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 ## Core workflows
 - Change lifecycle: `change-design → change-plan → change-implement →
   change-review → change-validate → change-archive`.
+- Optional pre-build gate: `change-plan-review` — confront design + plan with the
+  real code/data + contracts before implementing (opt-in; catches late-surfacing
+  design gaps cheaply).
 - Supporting: `experience-capture`, `workflow-capture`, `docs-refresh`,
   `changeflow-init`.
 
@@ -53,7 +56,7 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 ```
 
 ## Core modules
-- **commands/** — the 10 command prompts; editing a command and re-syncing is the
+- **commands/** — the 11 command prompts; editing a command and re-syncing is the
   main way behavior changes. Single source of truth for both tools.
 - **templates/** — bootstrap docs the plugin writes into target repos.
 - **scripts/init.sh** — deterministic scaffold (dirs + bootstrap docs + Codex
@@ -64,7 +67,7 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 
 ## Feature status
 - Status: **active, v0.1.0**. Installed locally as `changeflow@skills-dir`.
-- 10 commands; Codex support via generated skills; marketplace catalog for
+- 11 commands; Codex support via generated skills; marketplace catalog for
   `/plugin install`. Command prompts enriched and A/B-validated (Codex blind
   judge: new prompts won all 3 difficulty tiers).
 

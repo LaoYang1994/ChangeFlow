@@ -13,6 +13,8 @@ so any agent — or human — always knows where to look and where to write.
 
 Supporting commands: `/experience-capture`, `/workflow-capture`, `/docs-refresh`, `/changeflow-init`.
 
+Optional pre-build gate: `/change-plan-review` (between plan and implement).
+
 ---
 
 ## Why it exists (design philosophy)
@@ -146,6 +148,7 @@ repo/
 | `/changeflow-init` | Scaffold the structure; on an existing repo, draft `PROJECT.md` from the code. |
 | `/change-design` | Clarify requirements, confirm scope, freeze a design → `design.md`. |
 | `/change-plan` | Turn the design into a task checklist (stable IDs + file paths) → `plan.md`. |
+| `/change-plan-review` | (Opt-in) pre-build gate: confront design + plan with the real code/data + contracts before implementing; fold fixes into design/plan. |
 | `/change-implement` | Implement strictly per the plan; stops if there is no frozen design + plan. Asks whether to isolate the code in a git worktree (`.worktrees/<id>/`). |
 | `/change-review` | Self-review against design/plan/contracts → `review.md` (P1/P2/P3 + verdict). |
 | `/change-validate` | Record real test/benchmark evidence → `validation.md` (no claim without fresh output). |
