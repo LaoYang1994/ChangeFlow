@@ -179,5 +179,11 @@ imports `AGENTS.md` via `@AGENTS.md`; Codex reads `AGENTS.md` natively.
 ├── scripts/
 │   ├── init.sh             # scaffolds a target repo (Claude + Codex)
 │   └── sync-codex.py       # generates .codex/skills/ from commands/
+├── AGENTS.md, CLAUDE.md    # this repo's own agent instructions (it dogfoods itself)
+├── docs/                   # this repo's own durable docs (PROJECT/CONCEPTS/CONTRACTS/workflows/experiences)
 └── README.md
 ```
+
+ChangeFlow uses ChangeFlow on itself: this repo's durable docs live in `docs/`
+and its agent rules in `AGENTS.md`. The stubs under `templates/` are what the
+plugin *ships* to other repos — not this repo's own docs.
