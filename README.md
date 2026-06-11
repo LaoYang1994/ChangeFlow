@@ -11,7 +11,7 @@ so any agent — or human — always knows where to look and where to write.
 /change-design → /change-plan → /change-implement → /change-review → /change-validate → /change-archive
 ```
 
-Supporting commands: `/experience-capture`, `/docs-refresh`, `/changeflow-init`.
+Supporting commands: `/experience-capture`, `/workflow-capture`, `/docs-refresh`, `/changeflow-init`.
 
 ---
 
@@ -122,8 +122,8 @@ repo/
     ├── PROJECT.md       # what the project is + current feature status
     ├── CONCEPTS.md      # stable domain vocabulary
     ├── CONTRACTS.md     # hard rules code must obey (a living document)
-    ├── workflows/       # reusable step-by-step procedures (one file each)
-    ├── experiences/     # reusable lessons, pitfalls, debugging notes
+    ├── workflows/       # reusable step-by-step procedures (one file each + INDEX.md)
+    ├── experiences/     # reusable lessons, pitfalls, debugging notes (+ INDEX.md)
     └── changes/
         ├── active/<YYYY-MM-DD>-<slug>/   # in-flight change (design/plan/…)
         └── archive/<YYYY-MM-DD>-<slug>/  # completed changes (immutable)
@@ -150,7 +150,8 @@ repo/
 | `/change-review` | Self-review against design/plan/contracts → `review.md` (P1/P2/P3 + verdict). |
 | `/change-validate` | Record real test/benchmark evidence → `validation.md` (no claim without fresh output). |
 | `/change-archive` | Update durable docs, then move the change `active/ → archive/`. |
-| `/experience-capture` | Record a reusable lesson (`experiences/`) or procedure (`workflows/`), or graduate it to a test/contract. |
+| `/experience-capture` | Record a reusable lesson/pitfall (`experiences/`), or graduate it to a test/hook/contract. |
+| `/workflow-capture` | Record a reusable step-by-step procedure (`workflows/`). |
 | `/docs-refresh` | Global GC: detect doc drift against the code; report or `--apply`. |
 
 Every `/change-*` command takes an optional change-id; with one active change it

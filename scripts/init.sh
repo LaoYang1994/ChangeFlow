@@ -46,6 +46,10 @@ copy_if_missing "$PLUGIN_ROOT/templates/PROJECT.md"   "$TARGET/docs/PROJECT.md"
 copy_if_missing "$PLUGIN_ROOT/templates/CONCEPTS.md"  "$TARGET/docs/CONCEPTS.md"
 copy_if_missing "$PLUGIN_ROOT/templates/CONTRACTS.md" "$TARGET/docs/CONTRACTS.md"
 
+echo "[indexes]"
+copy_if_missing "$PLUGIN_ROOT/templates/WORKFLOWS_INDEX.md"   "$TARGET/docs/workflows/INDEX.md"
+copy_if_missing "$PLUGIN_ROOT/templates/EXPERIENCES_INDEX.md" "$TARGET/docs/experiences/INDEX.md"
+
 echo "[codex]  (existing skills preserved; refresh with sync-codex.py --force)"
 python3 "$PLUGIN_ROOT/scripts/sync-codex.py" "$PLUGIN_ROOT/commands" "$TARGET/.codex/skills" \
   | sed 's/^/  /'

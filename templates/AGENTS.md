@@ -6,9 +6,9 @@ Before starting work, read:
 2. `docs/CONCEPTS.md` if domain terms are unclear
 3. `docs/CONTRACTS.md` before changing data formats, APIs, metric semantics,
    tensor layouts, alignment logic, or config schemas
-4. `docs/experiences/` for relevant distilled lessons
-5. `docs/workflows/` before a recurring multi-step task — if an established
-   procedure matches, follow it instead of improvising
+4. `docs/experiences/INDEX.md` to spot a relevant lesson, then read that file
+5. `docs/workflows/INDEX.md` before a recurring multi-step task — if a listed
+   procedure matches, read and follow it instead of improvising
 
 Do not blind-search `docs/changes/archive/`. Read an archived change only when a
 durable doc links to it by ID, or when investigating a regression the durable
@@ -22,10 +22,10 @@ Do not create random markdown files. Use only these locations:
 - `docs/CONTRACTS.md`: stable contracts and hard rules (a living document — add
   rules whenever you discover the need, no active change required)
 - `docs/workflows/`: reusable step-by-step procedures for recurring tasks
-  ("to do X, first A then B") — one file per procedure
+  ("to do X, first A then B") — one file per procedure, listed in `INDEX.md`
 - `docs/changes/active/<YYYY-MM-DD>-<slug>/`: active changes
 - `docs/changes/archive/<YYYY-MM-DD>-<slug>/`: completed changes (immutable)
-- `docs/experiences/`: reusable lessons, pitfalls, debugging notes
+- `docs/experiences/`: reusable lessons, pitfalls, debugging notes, listed in `INDEX.md`
 
 ## When to open a change
 - A change is human-initiated. Only open a change folder when a `/change-*`
