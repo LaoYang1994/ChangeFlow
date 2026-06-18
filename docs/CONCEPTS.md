@@ -53,9 +53,11 @@ A catalog (`.claude-plugin/marketplace.json`) that lets users
 marketplace named `laoyang1994`.
 
 ## sync-codex
-`scripts/sync-codex.py` — generates Codex `.codex/skills/<name>/SKILL.md` from
-`commands/`. Rewrites Claude's `$ARGUMENTS` placeholder (Codex doesn't substitute
-it) and appends an explicit-invocation hint to `change-*` skills.
+`scripts/sync-codex.py <commands> <dest>` — generates Codex `<name>/SKILL.md` files
+from `commands/`. Default install dest is **user-level `~/.codex/skills/`** (opt-in
+`.codex/skills/` in a repo to vendor for collaborators). Rewrites Claude's
+`$ARGUMENTS` placeholder (Codex doesn't substitute it) and appends an
+explicit-invocation hint to `change-*` skills.
 
 ## AGENTS.md / CLAUDE.md
 `AGENTS.md` = tool-agnostic always-on instructions (read by Codex natively).

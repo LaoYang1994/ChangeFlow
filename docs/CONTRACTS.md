@@ -27,12 +27,14 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
 
 ## Scripts
 ### Rules
-- `init.sh` never overwrites existing files (`copy_if_missing`), and preflights
-  `python3` before scaffolding anything.
+- `init.sh` never overwrites existing files (`copy_if_missing`); it preflights
+  `python3` only when Codex skills are requested.
 - `sync-codex.py` rewrites the `$ARGUMENTS` placeholder for Codex and skips
   `changeflow-init` (Claude-only scaffolder).
-- `init.sh` is tool-agnostic: it writes `AGENTS.md` (Codex reads it) and
-  `.codex/skills/`, not just Claude files.
+- `init.sh --tools claude|codex|both`: always writes the tool-agnostic `AGENTS.md`
+  + docs/; adds `CLAUDE.md` only for Claude; installs Codex skills user-level
+  (`~/.codex/skills/`) by default, or into `.codex/skills/` with `--codex-in-repo`.
+  A repo never gets a tool's command tree unless explicitly vendored.
 
 ## Docs & tooling
 ### Rules

@@ -71,19 +71,25 @@ ln -s /path/to/ChangeFlow ~/.claude/skills/changeflow
 
 ### Codex
 
-Codex reads project-level skills from `.codex/skills/` and instructions from
-`AGENTS.md` — both per-repo. ChangeFlow installs them into your repo:
+Codex reads skills from `~/.codex/skills/` (user-level, all your repos) and from
+`.codex/skills/` (per-repo), plus `AGENTS.md`. Like the Claude plugin, ChangeFlow
+installs **user-level by default** — your repo only gets `AGENTS.md` + `docs/`, no
+`.codex/` clutter:
 
-- **If you also use Claude Code:** just run `/changeflow-init` in your repo — it
-  scaffolds `AGENTS.md` + `docs/` and generates `.codex/skills/`.
-- **Codex-only:** clone the plugin once, then scaffold your repo with its script:
-  ```
-  git clone https://github.com/LaoYang1994/ChangeFlow ~/changeflow-plugin
-  bash ~/changeflow-plugin/scripts/init.sh ~/changeflow-plugin /path/to/your-repo
-  ```
-  This writes `AGENTS.md` (which Codex reads natively) and
-  `.codex/skills/<command>/SKILL.md` for each workflow. Refresh after the plugin
-  updates with `python3 ~/changeflow-plugin/scripts/sync-codex.py ~/changeflow-plugin/commands /path/to/your-repo/.codex/skills --force`.
+```
+git clone https://github.com/LaoYang1994/ChangeFlow ~/changeflow-plugin
+# install ChangeFlow's skills into your Codex once (for all your repos):
+python3 ~/changeflow-plugin/scripts/sync-codex.py ~/changeflow-plugin/commands ~/.codex/skills
+# scaffold a repo (AGENTS.md + docs/ only):
+bash ~/changeflow-plugin/scripts/init.sh ~/changeflow-plugin /path/to/your-repo --tools codex
+```
+
+If you also use Claude Code, just run `/changeflow-init` and pick Codex (or both) —
+same result. Refresh after a plugin update: `… sync-codex.py … ~/.codex/skills --force`.
+
+**Vendor in the repo (opt-in):** to share the skills with collaborators via git
+(clone → works in Codex with zero per-user install), pass `--codex-in-repo` so they
+land in `.codex/skills/`, and commit them.
 
 ---
 
@@ -95,10 +101,12 @@ In your project:
 /changeflow-init
 ```
 
-This scaffolds the `docs/` structure, writes `AGENTS.md` + `CLAUDE.md`, installs
-the Codex skills — and, **on an existing codebase, explores the code and drafts
-`docs/PROJECT.md`** from what's actually there (and proposes `CONCEPTS`/
-`CONTRACTS` seeds for you to confirm). You can scope the exploration, e.g.
+It asks which tool(s) to set up (Claude / Codex / both), scaffolds the `docs/`
+structure + `AGENTS.md` (+ `CLAUDE.md` for Claude), installs the chosen tool's
+commands (Codex skills go user-level into `~/.codex/skills/` by default — your repo
+stays clean) — and, **on an existing codebase, explores the code and drafts
+`docs/PROJECT.md`** from what's actually there (proposing `CONCEPTS`/`CONTRACTS`
+seeds to confirm). You can scope the exploration, e.g.
 `/changeflow-init the perception module`.
 
 Then drive a change through the lifecycle:
@@ -186,11 +194,12 @@ chmod +x .git/hooks/pre-commit
 
 ## How it stays tool-agnostic
 
-`commands/*.md` is the single source of truth. The Codex skills under
-`.codex/skills/` are **generated** from it by `scripts/sync-codex.py` (which
-rewrites Claude's `$ARGUMENTS` placeholder for Codex and marks `change-*` skills
-as explicit-invocation-only, since ChangeFlow is human-initiated). `CLAUDE.md`
-imports `AGENTS.md` via `@AGENTS.md`; Codex reads `AGENTS.md` natively.
+`commands/*.md` is the single source of truth. The Codex skills are **generated**
+from it by `scripts/sync-codex.py` (which rewrites Claude's `$ARGUMENTS`
+placeholder for Codex and marks `change-*` skills as explicit-invocation-only,
+since ChangeFlow is human-initiated) — installed user-level into `~/.codex/skills/`
+by default, or vendored into a repo's `.codex/skills/` with `--codex-in-repo`.
+`CLAUDE.md` imports `AGENTS.md` via `@AGENTS.md`; Codex reads `AGENTS.md` natively.
 
 ## Repository layout (this plugin)
 
@@ -202,8 +211,8 @@ imports `AGENTS.md` via `@AGENTS.md`; Codex reads `AGENTS.md` natively.
 ├── commands/               # canonical Claude slash commands (source of truth)
 ├── templates/              # bootstrap docs (AGENTS/CLAUDE/PROJECT/CONCEPTS/CONTRACTS/WORKFLOW)
 ├── scripts/
-│   ├── init.sh             # scaffolds a target repo (Claude + Codex)
-│   └── sync-codex.py       # generates .codex/skills/ from commands/
+│   ├── init.sh             # scaffolds a target repo (tool-selectable via --tools)
+│   └── sync-codex.py       # generates Codex skills from commands/ (dest configurable)
 ├── AGENTS.md, CLAUDE.md    # this repo's own agent instructions (it dogfoods itself)
 ├── docs/                   # this repo's own durable docs (PROJECT/CONCEPTS/CONTRACTS/workflows/experiences)
 └── README.md

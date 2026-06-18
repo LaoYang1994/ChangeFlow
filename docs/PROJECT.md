@@ -43,13 +43,13 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 ├── .claude-plugin/
 │   ├── plugin.json          # plugin manifest
 │   └── marketplace.json     # single-plugin marketplace catalog (laoyang1994)
-├── commands/                # 10 slash commands — the canonical source of truth
+├── commands/                # 11 slash commands — the canonical source of truth
 ├── templates/               # stubs the plugin ships to other repos
 │   ├── AGENTS.md CLAUDE.md PROJECT.md CONCEPTS.md CONTRACTS.md WORKFLOW.md
 │   └── WORKFLOWS_INDEX.md EXPERIENCES_INDEX.md
 ├── scripts/
-│   ├── init.sh              # scaffolds a target repo (Claude + Codex)
-│   └── sync-codex.py        # generates .codex/skills/ from commands/
+│   ├── init.sh              # scaffolds a target repo (tool-selectable)
+│   └── sync-codex.py        # generates Codex skills from commands/ (dest configurable)
 ├── AGENTS.md CLAUDE.md      # THIS repo's own agent instructions
 ├── docs/                    # THIS repo's own durable docs (dogfood)
 └── README.md
@@ -59,9 +59,11 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 - **commands/** — the 11 command prompts; editing a command and re-syncing is the
   main way behavior changes. Single source of truth for both tools.
 - **templates/** — bootstrap docs the plugin writes into target repos.
-- **scripts/init.sh** — deterministic scaffold (dirs + bootstrap docs + Codex
-  skills); on an existing repo, the `changeflow-init` command then explores and
-  drafts PROJECT.md.
+- **scripts/init.sh** — deterministic scaffold: dirs + AGENTS.md + bootstrap docs
+  always; `--tools` adds CLAUDE.md (Claude) and/or installs Codex skills
+  (user-level `~/.codex/skills/` by default, or `.codex/skills/` with
+  `--codex-in-repo`). The `changeflow-init` command adds the tool-choice prompt
+  and, on an existing repo, drafts PROJECT.md from the code.
 - **scripts/sync-codex.py** — derives Codex `.codex/skills/<name>/SKILL.md` from
   `commands/`, rewriting `$ARGUMENTS` and marking `change-*` explicit-only.
 

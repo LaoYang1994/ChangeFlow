@@ -1,38 +1,43 @@
 ---
-description: Use when the user explicitly sets up ChangeFlow in a repo — scaffold the docs/ structure, write AGENTS.md/CLAUDE.md, install Codex skills, and (for an existing codebase) populate PROJECT.md from the actual code.
-argument-hint: "[target-dir | area to focus the exploration on]"
+description: Use when the user explicitly sets up ChangeFlow in a repo — choose tool(s), scaffold the docs/ structure + AGENTS.md, install the chosen tool's command set, and (for an existing codebase) draft PROJECT.md from the actual code.
+argument-hint: "[target-dir]"
 ---
 
-Scaffold ChangeFlow in a repository. Open with: "Setting up ChangeFlow …".
+Set up ChangeFlow in a repository. Open with: "Setting up ChangeFlow …".
 
-Argument (optional): $ARGUMENTS — either a target directory, or an area/subsystem to focus the codebase exploration on. Default target is the current directory; default exploration scope is the whole repo.
+Target directory (optional): $ARGUMENTS — defaults to the current directory.
 
-## Step 1 — Scaffold (deterministic)
-Run the init script. Pass the plugin root, then the target directory:
-- If the user named a target directory, pass it as a single quoted second argument (may contain spaces).
-- Otherwise omit it — `init.sh` defaults to the current directory.
+## Step 1 — Choose the tool(s)
+Ask the user which tool(s) to set up, **defaulting to the tool you're running in**:
+**Claude Code / Codex / both.** If the user already named a tool (in the arg or their message), honor it and skip the question. If a tool is already set up here, just offer to add the missing one — `init.sh` is idempotent and won't clobber.
+
+If **Codex** is chosen, also ask where its skills go:
+- **user-level** (`~/.codex/skills/`, default) — for you, across all your repos; nothing is added to this repo.
+- **vendored in repo** (`.codex/skills/`) — committed so collaborators get the skills via git.
+
+## Step 2 — Scaffold (deterministic)
+Run the init script with the chosen flags:
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/init.sh" "${CLAUDE_PLUGIN_ROOT}" "<target-dir>"   # or omit the 2nd arg for $PWD
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/init.sh" "${CLAUDE_PLUGIN_ROOT}" "<target-dir>" \
+  --tools <claude|codex|both> [--codex-in-repo]
 ```
-This creates `docs/{changes/active,changes/archive,experiences,workflows}/`, writes `AGENTS.md`, `CLAUDE.md`, and empty `docs/{PROJECT,CONCEPTS,CONTRACTS}.md` from templates (only if missing), and generates `.codex/skills/` so the repo works in Codex too. Report what was created vs. skipped.
+It always writes the `docs/` structure + `AGENTS.md` + `docs/{PROJECT,CONCEPTS,CONTRACTS}.md` + the INDEX files (never overwriting). `--tools claude` adds `CLAUDE.md`; `--tools codex` installs the Codex skills (user-level by default, or into `.codex/skills/` with `--codex-in-repo`). Report what was created vs. skipped.
 
-## Step 2 — Adopt an existing codebase (only if there is real code)
-A fresh `PROJECT.md` template is useless on an existing project. If the repo already has source code, populate the durable docs from what's actually there:
+## Step 3 — Adopt an existing codebase (only if there is real code)
+A blank `PROJECT.md` is useless on an existing project. If the repo already has source:
+1. **Explore** — whole repo, or the area named in the argument. Use Explore/subagents for anything non-trivial.
+2. **Draft `docs/PROJECT.md`** from the findings (what it does, modules, layout, feature status). Base every line on something you actually read — don't invent.
+3. **Propose** seeds for `docs/CONCEPTS.md` and `docs/CONTRACTS.md` (domain terms, candidate hard rules) — list them and **ask** before writing; contracts especially get confirmed, not asserted.
+4. Leave `docs/experiences/` and `docs/workflows/` empty (they fill as work happens).
 
-1. **Explore.** Scope = the whole repo, or the area the user named in the argument. Read the README, package/build manifests, and the main source tree. For anything non-trivial, dispatch Explore/general-purpose subagents to map modules in parallel rather than reading everything yourself.
-2. **Draft `docs/PROJECT.md`** from the findings: what the project does, main users, core workflows, repository layout, core modules (with responsibilities), and current feature status. Base every line on something you actually read — do not invent. This draft is the highest-value output; make it reviewable.
-3. **Propose seeds for `docs/CONCEPTS.md` and `docs/CONTRACTS.md`** — domain terms you saw, and candidate hard rules you inferred (e.g. invariants, data formats, layout assumptions). These are judgment calls: **list them and ask** before writing; contracts especially should be confirmed, not asserted.
-4. Leave `docs/experiences/` and `docs/workflows/` empty — they fill up as work happens.
-
-If the repo is empty/new, skip Step 2 and just leave the templates for the user to fill.
-
-## Step 3 — Hand off
-Remind the user to:
-- review/adjust the drafted `PROJECT.md` and confirm the proposed CONCEPTS/CONTRACTS;
-- replace the example **Critical rules** in `AGENTS.md` with real project rules (or move enforceable ones into tests/hooks);
-- accept the workspace trust dialog so project-scope config loads;
-- in Claude Code, run `/reload-plugins` (or restart) if commands aren't visible yet.
+## Step 4 — Hand off
+Remind the user:
+- review the drafted `PROJECT.md`; confirm the proposed CONCEPTS/CONTRACTS;
+- replace the example **Critical rules** in `AGENTS.md` with their real rules;
+- **Claude:** each user installs the changeflow plugin (commands come from the plugin, not the repo); accept the workspace trust dialog.
+- **Codex (user-level):** collaborators install ChangeFlow into their own `~/.codex/skills/` the same way. **Codex (vendored):** commit `.codex/skills/` so collaborators get it via git.
 
 ## Notes
-- `init.sh` never overwrites existing files; existing Codex skills are preserved (refresh with `scripts/sync-codex.py ... --force`).
-- Per-change templates (design/plan/review/validation) live inside their command bodies, not in `templates/`.
+- The repo only ever holds `AGENTS.md` + `docs/` (+ `CLAUDE.md` if Claude, + `.codex/skills/` only if vendored). Command sets live per-user (`~/.claude/skills/`, `~/.codex/skills/`) unless vendored.
+- To add the other tool later, just re-run this command for it (idempotent).
+- Refresh Codex skills after the plugin updates: `sync-codex.py <commands> <dest> --force`.
