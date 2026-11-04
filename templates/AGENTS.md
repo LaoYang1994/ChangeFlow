@@ -5,7 +5,7 @@ Before starting work, read:
 1. `docs/PROJECT.md`
 2. `docs/CONCEPTS.md` if domain terms are unclear
 3. `docs/CONTRACTS.md` before changing data formats, APIs, metric semantics,
-   tensor layouts, alignment logic, or config schemas
+   alignment logic, or config schemas
 4. `docs/experiences/INDEX.md` to spot a relevant lesson, then read that file
 5. `docs/workflows/INDEX.md` before a recurring multi-step task — if a listed
    procedure matches, read and follow it instead of improvising
@@ -23,7 +23,7 @@ Do not create random markdown files. Use only these locations:
   rules whenever you discover the need, no active change required)
 - `docs/workflows/`: reusable step-by-step procedures for recurring tasks
   ("to do X, first A then B") — one file per procedure, listed in `INDEX.md`
-- `docs/changes/active/<YYYY-MM-DD>-<slug>/`: active changes
+- `docs/changes/active/<YYYY-MM-DD>-<slug>/`: active changes (inside the change's worktree once one is used)
 - `docs/changes/archive/<YYYY-MM-DD>-<slug>/`: completed changes (immutable)
 - `docs/experiences/`: reusable lessons, pitfalls, debugging notes, listed in `INDEX.md`
 
@@ -46,17 +46,18 @@ long-term references, not to the change folder.
 
 ## Change workflow
 For a tracked change:
-1. `/change-design` — clarify requirements; create/update `design.md`.
+1. `/change-design` — clarify requirements; create/update `design.md`. It becomes
+   `Status: frozen` only on the user's approval.
 2. `/change-plan` — create/update `plan.md` with steps and task checklist.
    - (optional, non-trivial changes) `/change-plan-review` — confront design +
      plan with the real code/data + contracts *before* implementing; fold fixes
      back into design/plan.
 3. `/change-implement` — implement according to `plan.md`; keep checklist
-   updated.
+   updated. Requires `design.md` and `plan.md` to both be `Status: frozen`.
 4. `/change-review` — review against `design.md`, `plan.md`, `CONTRACTS.md`;
    record findings in `review.md`.
 5. `/change-validate` — required for correctness, performance, metric semantics,
-   CUDA/TensorRT, data alignment, or benchmark changes; record commands,
+   GPU/native code, data alignment, or benchmark changes; record commands,
    results, benchmark numbers, manual checks, and known gaps in `validation.md`.
 6. `/change-archive` — move the active change folder to archive; update
    `PROJECT.md`, `CONTRACTS.md`, `CONCEPTS.md`, `experiences/`, and `workflows/`
@@ -68,7 +69,7 @@ change → use it; multiple → ask which.
 `/change-implement` may, if you choose, isolate a change's code work in a git
 worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`);
 `/change-archive` offers to remove it. ChangeFlow only creates/removes worktrees
-— it never commits, merges, or pushes. Change docs always stay in the main tree.
+— it never commits, merges, or pushes. The change's docs move into the worktree with the code, so they commit and merge together; removal is offered only after the branch is merged.
 
 ## Entering implementation is human-triggered
 Do not slide into the implement phase on your own. After design/plan — even if
@@ -104,12 +105,13 @@ Suggest `/docs-refresh` when you notice drift (random docs, conflicting
 experiences or workflows, stale active changes, missing concepts). Run it at
 milestones (before a release, after a batch of changes lands).
 
+## Scratch files
+Don't put scratch files in `/tmp`. Use `./tmp/` in the current project
+(add `tmp/` to `.gitignore`) and clean up afterwards.
+
 ## Critical rules
-<!-- Replace these examples with your project's hard rules, or move enforceable
-     ones into tests/hooks. -->
-- Missing metric values must not be treated as zero.
-- Do not compare benchmark experiments with different `task_type` or
-  `gt_version`.
-- CUDA/TensorRT changes require correctness tests and benchmark comparison.
-- TensorRT plugin `enqueue` must not introduce host-device synchronization.
-- MCAP videoclip alignment must use frame-level timestamps when available.
+<!-- Add your project's hard rules here (or move enforceable ones into tests/hooks).
+     Examples of the kind of rule that belongs here — delete or replace them:
+     - Missing metric values must not be treated as zero.
+     - Do not compare benchmark runs made with different dataset versions.
+     - Changes to <performance-critical module> require a benchmark comparison. -->

@@ -10,7 +10,7 @@ When shipping a versioned release.
 1. Bump `version` in **both** `.claude-plugin/plugin.json` and the plugin entry in
    `.claude-plugin/marketplace.json` — they must agree.
 2. Update `README.md` / CHANGELOG if present.
-3. Run `claude plugin validate . --strict` — must pass.
+3. Run `python3 scripts/lint.py` and `claude plugin validate . --strict` — both must pass.
 4. Commit. Get explicit permission, then push.
 5. (Optional) `claude plugin tag .` to create the `<name>--v<version>` git tag
    (it validates that plugin.json and the marketplace entry agree).

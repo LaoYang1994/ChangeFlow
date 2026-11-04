@@ -1,5 +1,5 @@
 ---
-description: Use when the user explicitly self-reviews a change before completion — check the diff against design.md, plan.md, and CONTRACTS.md; record P1/P2/P3 findings in review.md. Human-initiated. Not a substitute for human code review.
+description: Use when the user explicitly self-reviews a change before completion (review.md). Human-initiated. Not a substitute for human code review.
 argument-hint: "[change-id]"
 ---
 
@@ -11,10 +11,19 @@ Target change-id (optional): $ARGUMENTS
 
 ## Steps (do in order — don't propose fixes while still reading)
 1. Locate the active change (id given → use it; omitted → one active → use it; multiple → ask which).
-2. **Read** the diff/code against `design.md`, `plan.md`, and `docs/CONTRACTS.md`.
+   A change's docs live in its worktree once implementation has started (`.worktrees/<change-id>/docs/changes/active/<change-id>/`), otherwise in the current tree. Look in the current tree **and** in every worktree (`git worktree list`); if the same id exists in both, the worktree copy is the live one. Read and write the change's docs there.
+2. **Find the change's code, then read it.** If `.worktrees/<change-id>/` exists, run every git command and read code there (the change's docs live there too). The diff base is where the work branched, not `HEAD` — commits made during implementation must stay in scope:
+   ```bash
+   cd "$(git rev-parse --show-toplevel)"
+   base=$(git merge-base HEAD origin/HEAD 2>/dev/null || git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null || echo HEAD)
+   git diff --name-only "$base"; git ls-files --others --exclude-standard   # committed + uncommitted + untracked
+   ```
+   If the list is empty, or the work looks already committed onto the default branch (so `base` is `HEAD`), ask the user for the starting commit — never conclude "nothing to review". Then read the diff/code against `design.md`, `plan.md`, and `docs/CONTRACTS.md`.
 3. **Large-file guard.** Flag any added/changed file over ~1 MB (or a stray binary blob):
    ```bash
-   { git diff --name-only HEAD; git ls-files --others --exclude-standard; } 2>/dev/null | sort -u \
+   cd "$(git rev-parse --show-toplevel)"
+   base=$(git merge-base HEAD origin/HEAD 2>/dev/null || git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null || echo HEAD)
+   { git diff --name-only "$base"; git ls-files --others --exclude-standard; } 2>/dev/null | sort -u \
      | while read -r f; do [ -f "$f" ] && s=$(wc -c <"$f") && [ "$s" -gt 1048576 ] && printf 'LARGE %s (%s bytes)\n' "$f" "$s"; done
    ```
    Any output → record as **P1** (don't let a stray fixture/blob into git). For a legitimately large asset, accept the finding or move it to Git LFS.

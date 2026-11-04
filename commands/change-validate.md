@@ -7,16 +7,18 @@ Run the ChangeFlow **change-validate** workflow. Open with: "Running change-vali
 
 Target change-id (optional): $ARGUMENTS
 
+Locate the change (id given → use it; omitted → one active → use it; multiple → ask which). A change's docs live in its worktree once implementation has started (`.worktrees/<change-id>/docs/changes/active/<change-id>/`), otherwise in the current tree. Look in the current tree **and** in every worktree (`git worktree list`); if the same id exists in both, the worktree copy is the live one. Read and write the change's docs there.
+
 > **IRON LAW: NO "VALIDATED" CLAIM WITHOUT FRESH EVIDENCE IN THIS RUN.**
 > Claiming validation without running it is dishonesty, not efficiency. Violating the letter is violating the spirit.
 
-Required for changes touching correctness, performance, CUDA, TensorRT, metrics, benchmarks, data alignment, public API/data contracts, or release-sensitive behavior. Optional for trivial/doc-only changes.
+Required for changes touching correctness, performance, metric/numeric semantics, benchmarks, data alignment, GPU or other low-level native code, public API/data contracts, or release-sensitive behavior. Optional for trivial/doc-only changes.
 
 **Scope:** this command records the *evidence of running* tests, plus one-off / manual / benchmark checks. **Committed, automated tests are written during `/change-implement`** (they're part of the implementation) — not here.
 
 ## Gate (in order, never skip a step)
 1. **IDENTIFY** the command that would prove each claim.
-2. **RUN** it fresh — re-run after any edit; an earlier run proves nothing.
+2. **RUN** it fresh — re-run after any edit; an earlier run proves nothing. Run it where the change's code lives (`.worktrees/<change-id>/` if one exists, else the repo root).
 3. **READ + PASTE** the real output: exit code, pass/fail counts, numbers.
 4. **Only then** record it as validated.
 
@@ -28,7 +30,7 @@ Required for changes touching correctness, performance, CUDA, TensorRT, metrics,
 
 ## Rules (rule — why)
 - A failed command is evidence too — record it; hiding failures defeats the point.
-- Missing metric ≠ 0 (per `CONTRACTS.md`) — treat absent values as absent, not zero.
+- A missing metric is not 0 — treat absent values as absent, not zero (and obey any matching rule in `CONTRACTS.md`).
 - Note what you did **not** validate under "Known gaps" — silent omissions read as full coverage.
 
 **Next:** `/change-archive`.
