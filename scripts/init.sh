@@ -3,14 +3,16 @@
 #
 # Usage:
 #   init.sh <plugin-root> [target-dir] [--tools claude|codex|both] [--codex-in-repo] [--force]
+#   --force only regenerates Codex skills that already exist; docs/ and AGENTS.md
+#   are never overwritten.
 #
 # Always writes (tool-agnostic, never overwrites existing): the docs/ structure,
 # AGENTS.md, docs/{PROJECT,CONCEPTS,CONTRACTS}.md, and the two INDEX.md files.
 #   --tools claude  → also write CLAUDE.md (Claude's @AGENTS.md pointer).
-#   --tools codex   → install Codex skills. Default: ${CODEX_HOME:-~/.codex}/skills
+#   --tools codex   → install Codex skills. Default: ${CODEX_SKILLS_DIR:-~/.agents/skills}
 #                     (user-level — available in all your repos, NOT added to this
 #                     repo). Use --codex-in-repo to vendor them into
-#                     <target>/.codex/skills instead (to share via git).
+#                     <target>/.agents/skills instead (to share via git).
 #   --tools both    → both (default).
 set -euo pipefail
 
@@ -77,20 +79,30 @@ fi
 
 if [ "$want_codex" = 1 ]; then
   if [ "$CODEX_IN_REPO" = 1 ]; then
-    codex_dest="$TARGET/.codex/skills"
+    codex_dest="$TARGET/.agents/skills"
     echo "[codex]  vendored in this repo — commit it so collaborators get the skills via git"
   else
-    codex_dest="${CODEX_HOME:-$HOME/.codex}/skills"
+    codex_dest="${CODEX_SKILLS_DIR:-$HOME/.agents/skills}"
     echo "[codex]  user-level ($codex_dest) — available in all your repos; nothing added to this repo"
   fi
   python3 "$PLUGIN_ROOT/scripts/sync-codex.py" "$PLUGIN_ROOT/commands" "$codex_dest" $FORCE | sed 's/^/  /'
+  if [ "$CODEX_IN_REPO" = 0 ] && [ -z "${CODEX_SKILLS_DIR:-}" ] && [ -d "$HOME/.codex/skills/change-plan" ]; then
+    echo "  note: older ChangeFlow installs in ~/.codex/skills/ are not a documented Codex path — delete those copies to avoid duplicates."
+  fi
 fi
 
 echo "done."
 echo
 echo "Next:"
 echo "  - Fill in docs/PROJECT.md, docs/CONCEPTS.md, docs/CONTRACTS.md (or let /changeflow-init draft PROJECT.md from the code)."
-echo "  - Replace the example Critical rules in AGENTS.md with your project's real rules."
-[ "$want_claude" = 1 ] && echo "  - Claude Code: each user installs the changeflow plugin; accept the workspace trust dialog."
-[ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 1 ] && echo "  - Codex (vendored): commit .codex/skills/ so collaborators get the skills."
-[ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 0 ] && echo "  - Codex (user-level): collaborators install ChangeFlow into their own ~/.codex/skills the same way."
+echo "  - Add your project's real hard rules under 'Critical rules' in AGENTS.md."
+# NB: use if/fi (not `[ ] && echo`) so the script's exit status is 0 on success.
+if [ "$want_claude" = 1 ]; then
+  echo "  - Claude Code: each user installs the changeflow plugin; accept the workspace trust dialog."
+fi
+if [ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 1 ]; then
+  echo "  - Codex (vendored): commit .agents/skills/ so collaborators get the skills."
+fi
+if [ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 0 ]; then
+  echo "  - Codex (user-level): collaborators install ChangeFlow into their own ~/.agents/skills the same way."
+fi

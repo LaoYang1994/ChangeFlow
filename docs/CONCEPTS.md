@@ -14,6 +14,11 @@ one change. **Durable** = the project's current truth (PROJECT, CONCEPTS,
 CONTRACTS, workflows, experiences). Archiving distills durable knowledge out of
 the ephemeral change.
 
+## frozen
+A `design.md` / `plan.md` whose `Status:` line is `frozen (<date>)`: the user has
+explicitly approved it. `change-implement` requires both. Editing a frozen design
+sets it back to `draft` and marks the plan `stale`.
+
 ## experience
 A reusable **lesson/pitfall/root-cause** ("we hit X, the rule is Y"). Lives in
 `docs/experiences/`. Reactive.
@@ -54,19 +59,23 @@ marketplace named `laoyang1994`.
 
 ## sync-codex
 `scripts/sync-codex.py <commands> <dest>` — generates Codex `<name>/SKILL.md` files
-from `commands/`. Default install dest is **user-level `~/.codex/skills/`** (opt-in
-`.codex/skills/` in a repo to vendor for collaborators). Rewrites Claude's
-`$ARGUMENTS` placeholder (Codex doesn't substitute it) and appends an
-explicit-invocation hint to `change-*` skills.
+from `commands/`. Default install dest is **user-level `~/.agents/skills/`** (opt-in
+`.agents/skills/` in a repo to vendor for collaborators). Rewrites Claude's
+`$ARGUMENTS` placeholder (Codex doesn't substitute it), rewrites `/cmd` mentions to
+Codex's `$cmd`, and writes
+`agents/openai.yaml` (`allow_implicit_invocation: false`) for `change-*` skills.
 
 ## AGENTS.md / CLAUDE.md
 `AGENTS.md` = tool-agnostic always-on instructions (read by Codex natively).
 `CLAUDE.md` = Claude Code's file; it `@AGENTS.md`-imports rather than duplicates,
-plus Claude-specific bits.
+plus Claude-specific bits. (This plugin repo has no root `CLAUDE.md`: the plugin
+validator warns about it, and Claude Code reads `AGENTS.md` directly.)
 
 ## worktree (per change)
-Optional code isolation: at `change-implement` the agent asks whether to work in a
+Optional isolation (code + docs): at `change-implement` the agent asks whether to work in a
 new git worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`) or on
-the current branch. Change docs stay in the main tree (so `active/` and multiple
-concurrent changes keep working); only code is isolated. The one VCS action
+the current branch. At that point the change's docs move into the worktree (docs live with the
+code, so they merge together); before implementation — or without a worktree — they
+live in the current tree. Commands find a change by ID across the current tree and
+all worktrees. The one VCS action
 ChangeFlow takes — it never commits, merges, or pushes.

@@ -10,7 +10,7 @@ Options (optional): $ARGUMENTS
 Global GC for the documentation system. It does not run on a cron and does not auto-mutate. Trigger it reactively (you trip over drift) or at a milestone. By default **report**; only edit directly when invoked with `--apply`.
 
 ## Method — verify against reality, don't trust prose
-For each durable claim, **check it against the code/repo** (e.g. `grep` for the referenced symbol/file). A claim you didn't verify is `unverified`, not `accurate`. Inspect `AGENTS.md`, `CLAUDE.md`, `docs/PROJECT.md`, `docs/CONCEPTS.md`, `docs/CONTRACTS.md`, `docs/changes/active/`, `docs/changes/archive/`, `docs/experiences/`.
+For each durable claim, **check it against the code/repo** (e.g. `grep` for the referenced symbol/file). A claim you didn't verify is `unverified`, not `accurate`. Inspect `AGENTS.md`, `CLAUDE.md`, `docs/PROJECT.md`, `docs/CONCEPTS.md`, `docs/CONTRACTS.md`, `docs/changes/active/`, `docs/changes/archive/`, `docs/experiences/`. Active changes may live inside worktrees — check `git worktree list` too, and flag worktrees whose branch or change folder looks abandoned.
 
 ## Checks
 - **Stale:** a doc references code/files that changed or no longer exist.

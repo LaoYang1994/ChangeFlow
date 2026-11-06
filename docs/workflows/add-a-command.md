@@ -15,15 +15,16 @@ Whenever you create a new `commands/<name>.md` or materially change one.
    explicit-invocation-only automatically; supporting commands stay suggestible.
 3. Update `README.md` (command table + supporting-commands line) and `AGENTS.md`
    if the command produces or reads a durable doc.
-4. Regenerate Codex skills: `python3 scripts/sync-codex.py commands <repo>/.codex/skills --force`
-   (`changeflow-init` is the only command intentionally skipped).
-5. Run `claude plugin validate . --strict` — must pass.
+4. Refresh your own Codex install: `python3 scripts/sync-codex.py commands ~/.agents/skills --force`
+   (`changeflow-init` is the only command intentionally skipped). Don't generate
+   skills into this repo — it doesn't vendor `.agents/skills/`.
+5. Run `python3 scripts/lint.py` and `claude plugin validate . --strict` — both must pass.
 6. Commit. Get explicit permission before pushing.
 
 ## Gotchas
 - A description that summarizes the workflow makes the agent follow the blurb and
   skip the body — keep it trigger-only.
-- Never hand-edit `.codex/skills/*` — they're generated; regenerate instead.
+- Never hand-edit `.agents/skills/*` — they're generated; regenerate instead.
 - Forgetting `--force` leaves stale Codex skills (sync skips existing by default).
 
 ## Related

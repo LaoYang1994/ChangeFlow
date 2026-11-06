@@ -16,3 +16,9 @@ Thumbs.db
 
 # Local-only design doc (not published)
 ChangeFlow-Design-v2.md
+
+# Codex skills are generated into ~/.agents/skills; this repo does not vendor them
+.agents/
+
+# Agent scratch space (use ./tmp instead of /tmp)
+tmp/

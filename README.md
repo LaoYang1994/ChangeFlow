@@ -71,25 +71,29 @@ ln -s /path/to/ChangeFlow ~/.claude/skills/changeflow
 
 ### Codex
 
-Codex reads skills from `~/.codex/skills/` (user-level, all your repos) and from
-`.codex/skills/` (per-repo), plus `AGENTS.md`. Like the Claude plugin, ChangeFlow
+Codex reads skills from `~/.agents/skills/` (user-level, all your repos) and from
+`.agents/skills/` (per-repo; scanned from the working directory up to the repo root), plus `AGENTS.md`. Like the Claude plugin, ChangeFlow
 installs **user-level by default** — your repo only gets `AGENTS.md` + `docs/`, no
-`.codex/` clutter:
+`.agents/` clutter:
 
 ```
 git clone https://github.com/LaoYang1994/ChangeFlow ~/changeflow-plugin
 # install ChangeFlow's skills into your Codex once (for all your repos):
-python3 ~/changeflow-plugin/scripts/sync-codex.py ~/changeflow-plugin/commands ~/.codex/skills
+python3 ~/changeflow-plugin/scripts/sync-codex.py ~/changeflow-plugin/commands ~/.agents/skills
 # scaffold a repo (AGENTS.md + docs/ only):
 bash ~/changeflow-plugin/scripts/init.sh ~/changeflow-plugin /path/to/your-repo --tools codex
 ```
 
 If you also use Claude Code, just run `/changeflow-init` and pick Codex (or both) —
-same result. Refresh after a plugin update: `… sync-codex.py … ~/.codex/skills --force`.
+same result. Refresh after a plugin update: `… sync-codex.py … ~/.agents/skills --force`.
+
+In Codex, call a command with `$`, e.g. `$change-design` (or pick it from `/skills`).
+Older ChangeFlow versions installed into `~/.codex/skills/`, which is not a documented
+Codex skills location — delete those copies to avoid duplicates.
 
 **Vendor in the repo (opt-in):** to share the skills with collaborators via git
 (clone → works in Codex with zero per-user install), pass `--codex-in-repo` so they
-land in `.codex/skills/`, and commit them.
+land in `.agents/skills/`, and commit them.
 
 ---
 
@@ -103,7 +107,7 @@ In your project:
 
 It asks which tool(s) to set up (Claude / Codex / both), scaffolds the `docs/`
 structure + `AGENTS.md` (+ `CLAUDE.md` for Claude), installs the chosen tool's
-commands (Codex skills go user-level into `~/.codex/skills/` by default — your repo
+commands (Codex skills go user-level into `~/.agents/skills/` by default — your repo
 stays clean) — and, **on an existing codebase, explores the code and drafts
 `docs/PROJECT.md`** from what's actually there (proposing `CONCEPTS`/`CONTRACTS`
 seeds to confirm). You can scope the exploration, e.g.
@@ -157,7 +161,7 @@ repo/
 | `/change-design` | Clarify requirements, confirm scope, freeze a design → `design.md`. |
 | `/change-plan` | Turn the design into a task checklist (stable IDs + file paths) → `plan.md`. |
 | `/change-plan-review` | (Opt-in) pre-build gate: confront design + plan with the real code/data + contracts before implementing; fold fixes into design/plan. |
-| `/change-implement` | Implement strictly per the plan; stops if there is no frozen design + plan. Asks whether to isolate the code in a git worktree (`.worktrees/<id>/`). |
+| `/change-implement` | Implement strictly per the plan; stops if there is no frozen design + plan. Asks whether to isolate the change in a git worktree (`.worktrees/<id>/`); its docs move there with the code. |
 | `/change-review` | Self-review against design/plan/contracts → `review.md` (P1/P2/P3 + verdict). |
 | `/change-validate` | Record real test/benchmark evidence → `validation.md` (no claim without fresh output). |
 | `/change-archive` | Update durable docs, then move the change `active/ → archive/`. |
@@ -176,19 +180,25 @@ uses that, with several it asks which.
 at commit time, install this opt-in pre-commit hook:
 
 ```bash
+if [ -e .git/hooks/pre-commit ]; then
+  echo "A pre-commit hook already exists — merge this check into it by hand."
+else
 cat > .git/hooks/pre-commit <<'EOF'
 #!/usr/bin/env bash
 # Block staged files larger than 1 MB. Override with: git commit --no-verify
 fail=0
 while read -r f; do
-  [ -f "$f" ] || continue
-  s=$(wc -c <"$f")
+  s=$(git cat-file -s ":$f" 2>/dev/null) || continue   # size of the staged blob
   [ "$s" -gt 1048576 ] && { echo "blocked (>1MB): $f ($s bytes)"; fail=1; }
-done < <(git diff --cached --name-only)
+done < <(git diff --cached --name-only --diff-filter=ACM)
 [ "$fail" = 0 ] || { echo "Large file(s) staged — use 'git commit --no-verify' to override, or Git LFS."; exit 1; }
 EOF
-chmod +x .git/hooks/pre-commit
+  chmod +x .git/hooks/pre-commit
+fi
 ```
+
+`.git/hooks/` isn't versioned. To share the hook with collaborators, commit it
+under e.g. `.githooks/` and run `git config core.hooksPath .githooks`.
 
 ---
 
@@ -196,9 +206,9 @@ chmod +x .git/hooks/pre-commit
 
 `commands/*.md` is the single source of truth. The Codex skills are **generated**
 from it by `scripts/sync-codex.py` (which rewrites Claude's `$ARGUMENTS`
-placeholder for Codex and marks `change-*` skills as explicit-invocation-only,
-since ChangeFlow is human-initiated) — installed user-level into `~/.codex/skills/`
-by default, or vendored into a repo's `.codex/skills/` with `--codex-in-repo`.
+placeholder for Codex and marks `change-*` skills explicit-invocation-only via `agents/openai.yaml`,
+since ChangeFlow is human-initiated) — installed user-level into `~/.agents/skills/`
+by default, or vendored into a repo's `.agents/skills/` with `--codex-in-repo`.
 `CLAUDE.md` imports `AGENTS.md` via `@AGENTS.md`; Codex reads `AGENTS.md` natively.
 
 ## Repository layout (this plugin)
@@ -212,8 +222,9 @@ by default, or vendored into a repo's `.codex/skills/` with `--codex-in-repo`.
 ├── templates/              # bootstrap docs (AGENTS/CLAUDE/PROJECT/CONCEPTS/CONTRACTS/WORKFLOW)
 ├── scripts/
 │   ├── init.sh             # scaffolds a target repo (tool-selectable via --tools)
-│   └── sync-codex.py       # generates Codex skills from commands/ (dest configurable)
-├── AGENTS.md, CLAUDE.md    # this repo's own agent instructions (it dogfoods itself)
+│   ├── sync-codex.py       # generates Codex skills from commands/ (dest configurable)
+│   └── lint.py             # checks this plugin's own contracts (run before committing)
+├── AGENTS.md               # this repo's own agent instructions (it dogfoods itself)
 ├── docs/                   # this repo's own durable docs (PROJECT/CONCEPTS/CONTRACTS/workflows/experiences)
 └── README.md
 ```

@@ -1,5 +1,5 @@
 ---
-description: Use when the user captures a reusable lesson/pitfall/root-cause into docs/experiences/, or when you notice one worth recording. For step-by-step procedures use /workflow-capture; enforceable rules graduate to a test/hook/contract.
+description: Use when the user captures a reusable lesson/pitfall/root-cause into docs/experiences/, or when you notice one worth recording. For step-by-step procedures use /workflow-capture.
 argument-hint: <what was learned>
 ---
 
@@ -7,7 +7,7 @@ Run the ChangeFlow **experience-capture** workflow. Open with: "Running experien
 
 Lesson from the user (may be empty): $ARGUMENTS
 
-For repeated bugs, debugging patterns, performance pitfalls, CUDA/TensorRT gotchas, benchmark/alignment lessons.
+For repeated bugs, debugging patterns, performance pitfalls, platform/toolchain gotchas (e.g. GPU/native code), benchmark/alignment lessons.
 
 ## Should I record this, and where?
 - Only if it's **reusable**, not a one-off: *would this save a future session time, here or elsewhere?* If no, don't write it.

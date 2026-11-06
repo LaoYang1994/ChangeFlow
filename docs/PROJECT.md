@@ -49,8 +49,9 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 │   └── WORKFLOWS_INDEX.md EXPERIENCES_INDEX.md
 ├── scripts/
 │   ├── init.sh              # scaffolds a target repo (tool-selectable)
-│   └── sync-codex.py        # generates Codex skills from commands/ (dest configurable)
-├── AGENTS.md CLAUDE.md      # THIS repo's own agent instructions
+│   ├── sync-codex.py        # generates Codex skills from commands/ (dest configurable)
+│   └── lint.py              # checks this plugin's own contracts (run before committing)
+├── AGENTS.md                # THIS repo's own agent instructions
 ├── docs/                    # THIS repo's own durable docs (dogfood)
 └── README.md
 ```
@@ -61,17 +62,22 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 - **templates/** — bootstrap docs the plugin writes into target repos.
 - **scripts/init.sh** — deterministic scaffold: dirs + AGENTS.md + bootstrap docs
   always; `--tools` adds CLAUDE.md (Claude) and/or installs Codex skills
-  (user-level `~/.codex/skills/` by default, or `.codex/skills/` with
+  (user-level `~/.agents/skills/` by default, or `.agents/skills/` with
   `--codex-in-repo`). The `changeflow-init` command adds the tool-choice prompt
   and, on an existing repo, drafts PROJECT.md from the code.
-- **scripts/sync-codex.py** — derives Codex `.codex/skills/<name>/SKILL.md` from
-  `commands/`, rewriting `$ARGUMENTS` and marking `change-*` explicit-only.
+- **scripts/sync-codex.py** — derives Codex `.agents/skills/<name>/SKILL.md` from
+  `commands/`, rewriting `$ARGUMENTS` and `/cmd` mentions (→ `$cmd`) and marking `change-*` explicit-only.
+- **scripts/lint.py** — mechanical check of this plugin's own contracts (command
+  frontmatter, README table, versions, templates, init/sync smoke tests). Run before
+  committing.
 
 ## Feature status
 - Status: **active, v0.1.0**. Installed locally as `changeflow@skills-dir`.
 - 11 commands; Codex support via generated skills; marketplace catalog for
-  `/plugin install`. Command prompts enriched and A/B-validated (Codex blind
-  judge: new prompts won all 3 difficulty tiers).
+  `/plugin install`. Command prompts were A/B-evaluated once
+  (Codex blind judge: new prompts won all 3 difficulty tiers) — the raw results were
+  not kept in the repo, and the prompts have changed since (Status markers, review
+  diff base). Re-run `docs/workflows/eval-a-prompt-change.md` before relying on it.
 
 ## Links
 - Hard rules: `docs/CONTRACTS.md`

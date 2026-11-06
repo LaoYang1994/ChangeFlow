@@ -4,7 +4,7 @@
 
 ## Workflow
 - Use plan mode when running `/change-design`.
-- Use TodoWrite to track `plan.md` tasks during `/change-implement`.
+- Use Claude Code's task list to track `plan.md` tasks during `/change-implement`.
 
 ## Memory
 - Durable learnings belong in `docs/experiences/` (via `/experience-capture`),
