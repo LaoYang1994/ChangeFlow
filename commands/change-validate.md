@@ -7,7 +7,7 @@ Run the ChangeFlow **change-validate** workflow. Open with: "Running change-vali
 
 Target change-id (optional): $ARGUMENTS
 
-Locate the change (id given → use it; omitted → one active → use it; multiple → ask which). A change's docs live in its worktree once implementation has started (`.worktrees/<change-id>/docs/changes/active/<change-id>/`), otherwise in the current tree. Look in the current tree **and** in every worktree (`git worktree list`); if the same id exists in both, the worktree copy is the live one. Read and write the change's docs there.
+Locate the change (id given → use it; omitted → one active → use it; multiple → ask which). A change's docs live in its worktree (`.worktrees/<change-id>/docs/changes/active/<change-id>/`) if one was created at `/change-design`, otherwise in the current tree (`docs/changes/active/<change-id>/`). Look in the current tree **and** in every worktree (`git worktree list`); read and write the change's docs there.
 
 > **IRON LAW: NO "VALIDATED" CLAIM WITHOUT FRESH EVIDENCE IN THIS RUN.**
 > Claiming validation without running it is dishonesty, not efficiency. Violating the letter is violating the spirit.

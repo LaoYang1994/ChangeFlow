@@ -28,8 +28,7 @@ archive). Reference a change by its immutable ID, never by path.
 Do not slide into the implement phase on your own. After design/plan — even if the
 user approves the plan or asks for tweaks — do NOT start writing project code.
 Revising `design.md`/`plan.md` per feedback is fine; writing code requires the user
-to explicitly start implementation (run `/change-implement`), which is also where
-the worktree choice is offered.
+to explicitly start implementation (run `/change-implement`).
 
 ## Discuss before modifying
 When the user is designing or deciding something, settle the design and get

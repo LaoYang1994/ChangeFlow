@@ -72,10 +72,11 @@ plus Claude-specific bits. (This plugin repo has no root `CLAUDE.md`: the plugin
 validator warns about it, and Claude Code reads `AGENTS.md` directly.)
 
 ## worktree (per change)
-Optional isolation (code + docs): at `change-implement` the agent asks whether to work in a
-new git worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`) or on
-the current branch. At that point the change's docs move into the worktree (docs live with the
-code, so they merge together); before implementation — or without a worktree — they
-live in the current tree. Commands find a change by ID across the current tree and
-all worktrees. The one VCS action
-ChangeFlow takes — it never commits, merges, or pushes.
+Optional isolation (docs + code from day one): when creating a new change at
+`change-design`, the agent asks once whether to isolate it in a new git worktree
+at `.worktrees/<change-id>/` (branch `change/<change-id>`) or create it on the
+current branch. Choosing a worktree keeps the main branch clean from the start,
+and the change's docs and code live together there for its entire lifecycle (never
+moved mid-stream) so they commit and merge together. Commands find a change by ID
+across the current tree and all worktrees. The one VCS action ChangeFlow takes —
+it never commits, merges, or pushes.

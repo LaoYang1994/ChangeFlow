@@ -11,10 +11,10 @@ This is the **pre-build gate** — the cheapest place to catch design/plan gaps,
 
 ## Steps (do in order — don't fix while still reading)
 1. Locate the active change (id given → use it; omitted → one active → use it; multiple → ask which).
-   A change's docs live in its worktree once implementation has started (`.worktrees/<change-id>/docs/changes/active/<change-id>/`), otherwise in the current tree. Look in the current tree **and** in every worktree (`git worktree list`); if the same id exists in both, the worktree copy is the live one. Read and write the change's docs there.
-2. Read `design.md` and `plan.md`.
+   A change's docs live in its worktree (`.worktrees/<change-id>/docs/changes/active/<change-id>/`) if one was created at `/change-design`, otherwise in the current tree (`docs/changes/active/<change-id>/`). Look in the current tree **and** in every worktree (`git worktree list`); read and write the change's docs there.
+2. Read `design.md` and `plan.md`. If the change lives in a worktree and the default branch has new commits ahead of `HEAD`, note how many commits behind the worktree is so the user can rebase/merge first if desired.
 3. **Confront them with reality** — this is the whole point of the gate, don't skip it:
-   - Open the actual code each task/decision touches. Do the plan's assumptions hold? Did it miss a code seam, caller, or edge case the code reveals?
+   - Open the actual code (in that tree) each task/decision touches. Do the plan's assumptions hold? Did it miss a code seam, caller, or edge case the code reveals?
    - If the change is data-dependent, look at a **real data sample** (empty/edge cases and variants — e.g. missing frames, alternate source types, odd shapes).
    - Check the design/plan against `docs/CONTRACTS.md`.
 4. Classify gaps as findings (format below). A finding here = something that would otherwise force a design/plan change mid-implementation.

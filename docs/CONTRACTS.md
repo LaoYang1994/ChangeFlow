@@ -61,14 +61,15 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
 ## Process
 ### Rules
 - ChangeFlow does not manage commits, merges, PRs, or review tools — that's the
-  user's VCS workflow. **One carved-out exception:** `change-implement` may create
-  a per-change git worktree (`.worktrees/<change-id>/`, branch `change/<change-id>`)
-  and `change-archive` may remove it — both opt-in via an explicit ask, never
-  silent. It still never commits, merges, or pushes. **Docs live with the code:**
-  once a worktree is opened, `change-implement` moves the change's docs into it, and
-  every `/change-*` command looks for a change in the current tree *and* all
-  worktrees (a worktree copy wins). `change-archive` offers worktree removal only
-  after the branch is merged.
+  user's VCS workflow. **One carved-out exception:** `change-design` (when creating
+  a new change) may create a per-change git worktree (`.worktrees/<change-id>/`,
+  branch `change/<change-id>`) and `change-archive` may remove it — both opt-in via
+  an explicit ask, never silent. It still never commits, merges, or pushes. **Docs
+  live with the code from day one:** the location is chosen once at `change-design`
+  (keeping `main` clean), never moved mid-lifecycle, and every `/change-*` command
+  looks for a change in the current tree *and* all worktrees. `change-archive`
+  offers worktree removal only after the branch is merged (or after handling the
+  archived docs of an abandoned change).
 - `.worktrees/` is git-ignored.
 - **Never push to the remote without explicit, per-action user permission.**
 - **No scratch files in `/tmp`.** Temp/scratch work goes in `./tmp/` inside the

@@ -11,8 +11,8 @@ Write the plan for a **zero-context engineer**: assume they don't know this repo
 
 ## Steps
 1. Locate the active change. Id given → use it. Omitted → one active change → use it; multiple → list them and ask which.
-   A change's docs live in its worktree once implementation has started (`.worktrees/<change-id>/docs/changes/active/<change-id>/`), otherwise in the current tree. Look in the current tree **and** in every worktree (`git worktree list`); if the same id exists in both, the worktree copy is the live one. Read and write the change's docs there.
-2. Read `design.md` — if its `Status` isn't `frozen (...)`, STOP and ask the user to approve it first (don't plan against a draft). Then read relevant project files and `docs/CONTRACTS.md` if applicable.
+   A change's docs live in its worktree (`.worktrees/<change-id>/docs/changes/active/<change-id>/`) if one was created at `/change-design`, otherwise in the current tree (`docs/changes/active/<change-id>/`). Look in the current tree **and** in every worktree (`git worktree list`); read and write the change's docs there.
+2. Read `design.md` — if its `Status` isn't `frozen (...)`, STOP and ask the user to approve it first (don't plan against a draft). Then read relevant project files and `docs/CONTRACTS.md` (in that same tree) if applicable.
 3. If other active changes exist (in the current tree or any worktree), glance at their `plan.md` "Files to change" and **warn** on likely overlap.
 4. Write/update `plan.md` using the template, with `Status: draft`. Tasks live inside `plan.md` — there is no `tasks.md`.
 5. When the user approves the plan, set `Status: frozen (<today>)`. Approval only freezes the plan; it does not start implementation.

@@ -92,13 +92,19 @@ for n in ("change-plan", "change-plan-review", "change-implement", "change-revie
 check(all(locs.values()), f"locate-the-change sentence present (missing in: {[k for k, v in locs.items() if not v]})")
 check(len({v for v in locs.values() if v}) <= 1, "locate-the-change sentence is identical in every command")
 check("every worktree" in design, "change-design looks for changes across worktrees")
-check("move the change's docs into it" in impl, "change-implement moves the docs into the worktree")
+check("git worktree add .worktrees/<change-id>" in design, "change-design creates the per-change worktree up front")
+check("do not ask again or move files" in impl, "change-implement does not re-ask or move docs across trees")
 stale_hits = []
+stale_re = re.compile(
+    r"stay in the main tree|always stay in the main tree"
+    r"|moves? the change's docs into|docs move (?:into the worktree|there with the code)"
+    r"|once implementation has started"
+)
 for f in (list(ROOT.glob("commands/*.md")) + list(ROOT.glob("templates/*.md"))
           + list(ROOT.glob("docs/*.md")) + [ROOT / "README.md", ROOT / "AGENTS.md"]):
-    if re.search(r"stay in the main tree|always stay in the main tree", f.read_text()):
+    if stale_re.search(f.read_text()):
         stale_hits.append(f.name)
-check(not stale_hits, f"no leftover 'docs stay in the main tree' wording (in: {stale_hits})")
+check(not stale_hits, f"no leftover main-tree-only or mid-stream doc-move wording (in: {stale_hits})")
 archive = (ROOT / "commands/change-archive.md").read_text()
 check("only once the branch is merged" in archive, "change-archive removes a worktree only after merge")
 

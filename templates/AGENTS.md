@@ -23,7 +23,7 @@ Do not create random markdown files. Use only these locations:
   rules whenever you discover the need, no active change required)
 - `docs/workflows/`: reusable step-by-step procedures for recurring tasks
   ("to do X, first A then B") — one file per procedure, listed in `INDEX.md`
-- `docs/changes/active/<YYYY-MM-DD>-<slug>/`: active changes (inside the change's worktree once one is used)
+- `docs/changes/active/<YYYY-MM-DD>-<slug>/`: active changes (inside `.worktrees/<change-id>/` if created in a worktree at `/change-design`)
 - `docs/changes/archive/<YYYY-MM-DD>-<slug>/`: completed changes (immutable)
 - `docs/experiences/`: reusable lessons, pitfalls, debugging notes, listed in `INDEX.md`
 
@@ -66,17 +66,20 @@ For a tracked change:
 Every `/change-*` command takes an optional change-id. If omitted: one active
 change → use it; multiple → ask which.
 
-`/change-implement` may, if you choose, isolate a change's code work in a git
-worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`);
-`/change-archive` offers to remove it. ChangeFlow only creates/removes worktrees
-— it never commits, merges, or pushes. The change's docs move into the worktree with the code, so they commit and merge together; removal is offered only after the branch is merged.
+`/change-design` asks once (when creating a new change) whether to isolate it in a
+git worktree at `.worktrees/<change-id>/` (branch `change/<change-id>`) or create
+it on the current branch; `/change-archive` offers to remove it. ChangeFlow only
+creates/removes worktrees — it never commits, merges, or pushes. Choosing a
+worktree keeps `main` clean from day one, and the change's docs and code live
+together there for its entire lifecycle so they commit and merge together; removal
+is offered after the branch is merged (or after handling the archived docs of an
+abandoned change).
 
 ## Entering implementation is human-triggered
 Do not slide into the implement phase on your own. After design/plan — even if
 the user approves the plan or asks for tweaks — do NOT start writing or changing
 project code. Revising `design.md`/`plan.md` per feedback is fine; writing code
 requires the user to explicitly start implementation (run `/change-implement`).
-That step is also where the worktree choice is offered, so skipping it skips that.
 
 ## Discuss before modifying
 When the user is designing or deciding something, settle the design and get

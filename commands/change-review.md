@@ -11,7 +11,7 @@ Target change-id (optional): $ARGUMENTS
 
 ## Steps (do in order — don't propose fixes while still reading)
 1. Locate the active change (id given → use it; omitted → one active → use it; multiple → ask which).
-   A change's docs live in its worktree once implementation has started (`.worktrees/<change-id>/docs/changes/active/<change-id>/`), otherwise in the current tree. Look in the current tree **and** in every worktree (`git worktree list`); if the same id exists in both, the worktree copy is the live one. Read and write the change's docs there.
+   A change's docs live in its worktree (`.worktrees/<change-id>/docs/changes/active/<change-id>/`) if one was created at `/change-design`, otherwise in the current tree (`docs/changes/active/<change-id>/`). Look in the current tree **and** in every worktree (`git worktree list`); read and write the change's docs there.
 2. **Find the change's code, then read it.** If `.worktrees/<change-id>/` exists, run every git command and read code there (the change's docs live there too). The diff base is where the work branched, not `HEAD` — commits made during implementation must stay in scope:
    ```bash
    cd "$(git rev-parse --show-toplevel)"
