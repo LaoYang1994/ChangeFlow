@@ -16,7 +16,8 @@ the ephemeral change.
 
 ## frozen
 A `design.md` / `plan.md` whose `Status:` line is `frozen (<date>)`: the user has
-explicitly approved it. `change-implement` requires both. Editing a frozen design
+explicitly approved it (`frozen (<date>, autopilot)`: self-approved under
+`change-autopilot`). `change-implement` requires both. Editing a frozen design
 sets it back to `draft` and marks the plan `stale`.
 
 ## experience
@@ -42,6 +43,11 @@ should graduate upward or be pruned.
 ## human-initiated
 A change exists only when a human runs a `/change-*` command. Agents never
 auto-create change folders; they may *suggest*. The model B trigger.
+
+## autopilot
+`change-autopilot`: the user hands one change to the agent, which runs every
+phase without per-phase sign-off and stops only on a listed blocker. Its
+self-approvals carry the `autopilot` tag. It never commits, merges, or pushes.
 
 ## INDEX.md
 A one-line-per-entry index in `workflows/` and `experiences/`, so an agent finds

@@ -63,6 +63,11 @@ For a tracked change:
    `PROJECT.md`, `CONTRACTS.md`, `CONCEPTS.md`, `experiences/`, and `workflows/`
    when needed.
 
+`/change-autopilot` runs steps 1–6 for one change on its own: it asks its
+questions once up front, self-approves the routine gates (`Status: frozen (<date>,
+autopilot)`), always runs `/change-plan-review`, and stops to ask on real blockers.
+It never commits, merges, or pushes.
+
 Every `/change-*` command takes an optional change-id. If omitted: one active
 change → use it; multiple → ask which.
 
@@ -79,7 +84,8 @@ abandoned change).
 Do not slide into the implement phase on your own. After design/plan — even if
 the user approves the plan or asks for tweaks — do NOT start writing or changing
 project code. Revising `design.md`/`plan.md` per feedback is fine; writing code
-requires the user to explicitly start implementation (run `/change-implement`).
+requires the user to explicitly start implementation (run `/change-implement`, or
+hand the change to `/change-autopilot`).
 
 ## Discuss before modifying
 When the user is designing or deciding something, settle the design and get

@@ -34,6 +34,9 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 - Optional pre-build gate: `change-plan-review` — confront design + plan with the
   real code/data + contracts before implementing (opt-in; catches late-surfacing
   design gaps cheaply).
+- Hands-off mode: `change-autopilot` — one change through every phase on the
+  user's standing approval; asks up front, self-approves gates (tagged
+  `autopilot`), always runs plan-review, stops on real blockers.
 - Supporting: `experience-capture`, `workflow-capture`, `docs-refresh`,
   `changeflow-init`.
 
