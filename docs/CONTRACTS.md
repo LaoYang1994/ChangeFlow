@@ -26,7 +26,9 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
   use it, with several ask which.
 - `design.md` and `plan.md` carry a `Status:` line (`draft | frozen (date) | stale`).
   Only the user's explicit approval sets `frozen`; `change-implement` refuses to
-  start unless both are `frozen`.
+  start unless both are `frozen`. The one exception: under `change-autopilot` (the
+  user's standing approval for one change) the agent self-approves, and must write
+  `frozen (<date>, autopilot)` so a self-approval is never mistaken for a human one.
 
 ## Scripts
 ### Rules

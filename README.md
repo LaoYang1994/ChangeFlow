@@ -15,6 +15,8 @@ Supporting commands: `/experience-capture`, `/workflow-capture`, `/docs-refresh`
 
 Optional pre-build gate: `/change-plan-review` (between plan and implement).
 
+Hands-off mode: `/change-autopilot` runs the whole lifecycle for one change and stops only to ask when blocked.
+
 ---
 
 ## Why it exists (design philosophy)
@@ -124,6 +126,12 @@ Then drive a change through the lifecycle:
 /change-archive
 ```
 
+Or hand the whole change to the agent: `/change-autopilot "support multi-condition benchmark comparison"`.
+It asks its questions once up front, then runs every phase on its own: it self-approves the
+routine gates (`Status: frozen (<date>, autopilot)`), always runs the plan-review gate,
+and stops to ask on real blockers (scope or design changes, contract changes, repeated
+failures, anything destructive). It never commits, merges, or pushes.
+
 ---
 
 ## The documentation structure ChangeFlow maintains
@@ -165,6 +173,7 @@ repo/
 | `/change-review` | Self-review against design/plan/contracts → `review.md` (P1/P2/P3 + verdict). |
 | `/change-validate` | Record real test/benchmark evidence → `validation.md` (no claim without fresh output). |
 | `/change-archive` | Update durable docs, then move the change `active/ → archive/`. |
+| `/change-autopilot` | Drive one change through every phase unattended (questions up front, self-approved gates tagged `autopilot`, mandatory plan-review); stops to ask on real blockers. |
 | `/experience-capture` | Record a reusable lesson/pitfall (`experiences/`), or graduate it to a test/hook/contract. |
 | `/workflow-capture` | Record a reusable step-by-step procedure (`workflows/`). |
 | `/docs-refresh` | Global GC: detect doc drift against the code; report or `--apply`. |

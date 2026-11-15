@@ -1,0 +1,68 @@
+---
+description: Use when the user explicitly hands one change to the agent to drive through the whole lifecycle on its own, stopping only to ask when blocked. Human-initiated.
+argument-hint: "[<change-id> | <short description>]"
+---
+
+Run the ChangeFlow **change-autopilot** workflow. Open with: "Running change-autopilot for …".
+
+Argument (may be empty): $ARGUMENTS
+- Matches an existing **active** change-id → **resume** that change from its current phase.
+- Otherwise → a short description of a **new** change (empty → ask what the change is).
+
+Invoking this command is the user's **standing approval for this one change**: you drive it design → plan → plan-review → implement → review → validate → archive without waiting for a sign-off at each phase. It replaces the per-phase human approvals — nothing else. Every phase still follows its own `/change-*` workflow exactly (steps, templates, rules, iron laws); read that command before running its phase.
+
+> **IRON LAW: WHEN IN DOUBT, STOP AND ASK.**
+> The user pre-approved the *routine* gates, not your judgment calls. A guess that changes what gets built, a contract, or anything irreversible is exactly what they did not delegate.
+
+## 1. Kickoff — the one planned stop
+Before any unattended work, ask everything up front in **one** message, then wait:
+- **New change:** the design-changing clarification questions (`/change-design` step 4 — only ones whose answer changes the design; at most ~5, multiple-choice preferred), the scope in 1–2 lines (what it will and won't cover), and the worktree choice (`/change-design` step 6, naming the current branch).
+- **Resumed change:** say which phase it is in (see §2) and what's left; ask only if something is unclear.
+- Always: whether to **stop before archive** (default: run through archive).
+
+The user's answer to this message is the scope approval `/change-design` step 5 needs. From here on, run without further check-ins unless a stop condition (§4) fires.
+
+## 2. Where to start (resume)
+Locate the change (id given → use it; omitted → one active → use it; multiple → ask which). A change's docs live in its worktree (`.worktrees/<change-id>/docs/changes/active/<change-id>/`) if one was created at `/change-design`, otherwise in the current tree (`docs/changes/active/<change-id>/`). Look in the current tree **and** in every worktree (`git worktree list`); read and write the change's docs there. Its phase is the first that applies:
+1. no `design.md`, or `Status: draft` → design
+2. no `plan.md`, or `Status: draft | stale` → plan
+3. unchecked `T#` tasks → plan-review (if not yet run this autopilot), then implement
+4. no `review.md`, or verdict not `ready-to-archive` → review
+5. validation required but no `validation.md` → validate
+6. otherwise → archive
+
+## 3. Phases
+Run each phase per its command, with these autopilot substitutions:
+- **design** (`/change-design`): clarifications come from the kickoff; anything still unclear that doesn't change the design → an informed guess under `## Assumptions`. Write `design.md`, then self-approve: `Status: frozen (<today>, autopilot)`.
+- **plan** (`/change-plan`): write `plan.md`, then self-approve: `Status: frozen (<today>, autopilot)`.
+- **plan-review** (`/change-plan-review`): **mandatory** here — no human has read the design or plan, so this is their review. Fold fixes in and re-freeze (`autopilot`) if they stay within the kickoff scope. A second `revise-design` verdict → stop (§4).
+- **implement** (`/change-implement`): the pre-gate accepts `frozen (…, autopilot)`. Its rules hold in full: no unplanned work, tick a `T#` only when its artifact exists, write the tests, 3-strike rule.
+- **review** (`/change-review`): fix P1/P2 findings that stay inside the plan, then re-review once. P3s are recorded, not fixed.
+- **validate** (`/change-validate`): run it whenever the change touches what that command lists as requiring validation; fresh evidence only.
+- **archive** (`/change-archive`): unless the user chose to stop before it. Never remove the worktree — its branch isn't merged yet.
+
+`<today>` is `date +%F`. The `autopilot` tag is how a later reader tells a self-approval from a human one — never drop it, and never write it when a stop condition is pending.
+
+## 4. Stop conditions — stop, ask one question, wait
+Ask the single decision, with your recommendation and what you'll do after each answer. On the answer, resume where you stopped (autopilot is still in force).
+- An ambiguity or trade-off whose answer changes the goal, scope, or user-visible behavior.
+- The design must change after implementation started, or plan-review says `revise-design` twice.
+- The work needs a `docs/CONTRACTS.md` change, or would break one.
+- Work beyond the plan's files or tasks that isn't a trivial consequence of a planned task (scope creep).
+- Overlap with another active change's "Files to change".
+- The 3-strike rule fires, or required validation keeps failing after a fix attempt.
+- Required validation can't be run here (missing data, GPU, credentials, service) — never record it as validated.
+- After one fix round, review still has an open P1 or a `not-ready` verdict.
+- Archive with incomplete `T#` tasks.
+- Anything destructive, irreversible, or outward-facing: deleting data or files outside the change, installing or upgrading dependencies, migrations, network calls to real services, anything needing secrets.
+
+## Rules (rule — why)
+- Never commit, merge, rebase, push, or remove a worktree — ChangeFlow never does; autopilot doesn't widen that, so the user's review of the diff stays the final gate.
+- Never skip a phase or its iron law to keep moving — autopilot removes waiting, not checking; a skipped gate is how unreviewed work ships.
+- One change per invocation — the approval covers the change named at kickoff, not new ones you notice (suggest those in the final report).
+- A user message mid-run overrides the plan — stop, handle it, then resume if they want.
+
+## Final report
+End with: the change-id and where it lives; each phase's outcome (self-approvals, plan-review and review verdicts, validation results with what was **not** validated); the assumptions you made; and what is now the user's: review the diff, commit and merge `change/<change-id>` (if a worktree), then `git worktree remove .worktrees/<change-id>` after merging.
+
+**Next:** the user reviews and commits — nothing else.

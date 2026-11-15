@@ -22,7 +22,8 @@ Do not create random markdown files. Use only:
 ## Change workflow
 Non-trivial work is human-initiated via the `/change-*` commands this plugin
 ships (design → plan → [optional plan-review] → implement → review → validate →
-archive). Reference a change by its immutable ID, never by path.
+archive). `/change-autopilot` runs those phases for one change on the user's
+standing approval. Reference a change by its immutable ID, never by path.
 
 ## Entering implementation is human-triggered
 Do not slide into the implement phase on your own. After design/plan — even if the
