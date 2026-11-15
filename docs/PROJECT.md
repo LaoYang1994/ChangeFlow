@@ -75,7 +75,7 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
   committing.
 
 ## Feature status
-- Status: **active, v0.1.0**. Installed locally as `changeflow@skills-dir`.
+- Status: **active, v0.2.0**. Installed locally as `changeflow@skills-dir`.
 - 11 commands; Codex support via generated skills; marketplace catalog for
   `/plugin install`. Command prompts were A/B-evaluated once
   (Codex blind judge: new prompts won all 3 difficulty tiers) — the raw results were

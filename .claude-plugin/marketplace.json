@@ -12,7 +12,7 @@
       "name": "changeflow",
       "source": "./",
       "description": "Repo-native change workflow and documentation system for AI-assisted engineering. Works with Claude Code and Codex.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }
