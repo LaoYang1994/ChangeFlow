@@ -1,0 +1,9 @@
+{
+  "name": "changeflow",
+  "version": "0.3.0",
+  "description": "Repo-native change workflows and documentation for AI-assisted engineering.",
+  "skills": "./codex/skills/",
+  "interface": {
+    "displayName": "ChangeFlow"
+  }
+}

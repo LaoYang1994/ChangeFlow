@@ -131,7 +131,14 @@ section("manifests / files")
 try:
     pj = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())
     mj = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text())
-    check(True, "plugin.json and marketplace.json are valid JSON")
+    codex = json.loads((ROOT / ".codex-plugin/plugin.json").read_text())
+    agy = json.loads((ROOT / ".antigravity-plugin/plugin.json").read_text())
+    check(codex["name"] == pj["name"] and codex["version"] == pj["version"],
+          "Codex and Claude plugin identities and release versions match")
+    check(agy["name"] == pj["name"] and agy["version"] == pj["version"] and agy["skills"] == "./codex/skills/",
+          "Antigravity and Claude plugin identities, versions, and skills path match")
+    check(codex["skills"] == "./codex/skills/" and not (ROOT / "skills").exists(),
+          "Codex loads its package outside Claude's default skills directory")
     mv = [p.get("version") for p in mj.get("plugins", []) if p.get("name") == pj.get("name")]
     check(mv == [pj.get("version")], f"version agrees (plugin.json={pj.get('version')}, marketplace={mv})")
 except Exception as e:  # noqa: BLE001
@@ -178,6 +185,27 @@ with tempfile.TemporaryDirectory() as tmp:
     run([sys.executable, sync, str(ROOT / "commands"), str(out), "--prune"])
     check(not stale.exists() and mine.exists(), "--prune removes only stale generated skills")
 
+# ------------------------------------------ committed marketplace skill tree
+section("Codex marketplace package")
+with tempfile.TemporaryDirectory() as tmp:
+    out = Path(tmp) / "skills"
+    r = run([sys.executable, sync, str(ROOT / "commands"), str(out), "--plugin"])
+    check(r.returncode == 0, "generates the marketplace package")
+    check({p.parent.name for p in out.glob("*/SKILL.md")} == names,
+          "every command has a marketplace skill, including changeflow-init")
+
+    def contents(root):
+        return {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+
+    check(contents(out) == contents(ROOT / "codex/skills"),
+          "packaged skills are current (refresh with sync-codex.py commands codex/skills --plugin --force --prune)")
+    for name in sorted(names):
+        skill_dir = out / name
+        explicit = name.startswith("change-") or name == "changeflow-init"
+        policy = skill_dir / "agents/openai.yaml"
+        check(explicit == (policy.is_file() and "allow_implicit_invocation: false" in policy.read_text()),
+              f"{name}: preserves marketplace invocation policy")
+
 # ---------------------------------------------------------------- init smoke
 section("init.sh smoke test")
 init = str(ROOT / "scripts/init.sh")
@@ -215,6 +243,16 @@ with tempfile.TemporaryDirectory() as tmp:
     r = run(["bash", init, str(ROOT), str(tgt), "--tools", "codex"], env=env)
     check((home / ".agents/skills/change-plan/SKILL.md").exists(), "default Codex install goes to ~/.agents/skills")
     check("older ChangeFlow installs" in r.stdout, "warns about legacy ~/.codex/skills copies")
+
+with tempfile.TemporaryDirectory() as tmp:
+    tgt = Path(tmp) / "repo"
+    standalone = Path(tmp) / "user-skills"
+    env = dict(os.environ, CODEX_SKILLS_DIR=str(standalone))
+    r = run(["bash", init, str(ROOT), str(tgt), "--tools", "both", "--codex-marketplace"], env=env)
+    check(r.returncode == 0 and (tgt / "docs/PROJECT.md").is_file() and (tgt / "CLAUDE.md").is_file(),
+          "marketplace init scaffolds shared docs and supports both tools together")
+    check(not standalone.exists() and not (tgt / ".agents").exists(),
+          "marketplace init leaves standalone skills directories untouched")
 
 print()
 if failures:

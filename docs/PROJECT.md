@@ -46,7 +46,9 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 ├── .claude-plugin/
 │   ├── plugin.json          # plugin manifest
 │   └── marketplace.json     # single-plugin marketplace catalog (laoyang1994)
-├── commands/                # 11 slash commands — the canonical source of truth
+├── .codex-plugin/plugin.json # points Codex at codex/skills/
+├── codex/skills/            # generated marketplace package
+├── commands/                # 12 slash commands — the canonical source of truth
 ├── templates/               # stubs the plugin ships to other repos
 │   ├── AGENTS.md CLAUDE.md PROJECT.md CONCEPTS.md CONTRACTS.md WORKFLOW.md
 │   └── WORKFLOWS_INDEX.md EXPERIENCES_INDEX.md
@@ -60,13 +62,13 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
 ```
 
 ## Core modules
-- **commands/** — the 11 command prompts; editing a command and re-syncing is the
+- **commands/** — the 12 command prompts; editing a command and re-syncing is the
   main way behavior changes. Single source of truth for both tools.
 - **templates/** — bootstrap docs the plugin writes into target repos.
 - **scripts/init.sh** — deterministic scaffold: dirs + AGENTS.md + bootstrap docs
   always; `--tools` adds CLAUDE.md (Claude) and/or installs Codex skills
   (user-level `~/.agents/skills/` by default, or `.agents/skills/` with
-  `--codex-in-repo`). The `changeflow-init` command adds the tool-choice prompt
+  `--codex-in-repo`). The Codex marketplace initializer passes `--codex-marketplace` to use the bundled skills. The `changeflow-init` command adds the tool-choice prompt
   and, on an existing repo, drafts PROJECT.md from the code.
 - **scripts/sync-codex.py** — derives Codex `.agents/skills/<name>/SKILL.md` from
   `commands/`, rewriting `$ARGUMENTS` and `/cmd` mentions (→ `$cmd`) and marking `change-*` explicit-only.
@@ -75,8 +77,8 @@ AI coding agents (Claude Code, Codex) and the engineers who direct them.
   committing.
 
 ## Feature status
-- Status: **active, v0.2.0**. Installed locally as `changeflow@skills-dir`.
-- 11 commands; Codex support via generated skills; marketplace catalog for
+- Status: **active, v0.3.0**.
+- 12 commands; Claude and Codex share one marketplace catalog. Codex ships generated skills under `codex/skills/`. Claude supports
   `/plugin install`. Command prompts were A/B-evaluated once
   (Codex blind judge: new prompts won all 3 difficulty tiers) — the raw results were
   not kept in the repo, and the prompts have changed since (Status markers, review

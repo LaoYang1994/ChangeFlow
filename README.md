@@ -71,46 +71,55 @@ git clone https://github.com/LaoYang1994/ChangeFlow ~/.claude/skills/changeflow
 ln -s /path/to/ChangeFlow ~/.claude/skills/changeflow
 ```
 
-### Codex
+### Codex — via marketplace
 
-Codex reads skills from `~/.agents/skills/` (user-level, all your repos) and from
-`.agents/skills/` (per-repo; scanned from the working directory up to the repo root), plus `AGENTS.md`. Like the Claude plugin, ChangeFlow
-installs **user-level by default** — your repo only gets `AGENTS.md` + `docs/`, no
-`.agents/` clutter:
+Install the same GitHub marketplace and plugin in Codex:
 
-```
-git clone https://github.com/LaoYang1994/ChangeFlow ~/changeflow-plugin
-# install ChangeFlow's skills into your Codex once (for all your repos):
-python3 ~/changeflow-plugin/scripts/sync-codex.py ~/changeflow-plugin/commands ~/.agents/skills
-# scaffold a repo (AGENTS.md + docs/ only):
-bash ~/changeflow-plugin/scripts/init.sh ~/changeflow-plugin /path/to/your-repo --tools codex
+```bash
+codex plugin marketplace add LaoYang1994/ChangeFlow --ref main
+codex plugin add changeflow@laoyang1994
 ```
 
-If you also use Claude Code, just run `/changeflow-init` and pick Codex (or both) —
-same result. Refresh after a plugin update: `… sync-codex.py … ~/.agents/skills --force`.
+For an existing installation (including v0.2.0), refresh it with:
 
-In Codex, call a command with `$`, e.g. `$change-design` (or pick it from `/skills`).
-Older ChangeFlow versions installed into `~/.codex/skills/`, which is not a documented
-Codex skills location — delete those copies to avoid duplicates.
+```bash
+codex plugin marketplace upgrade laoyang1994
+```
 
-**Vendor in the repo (opt-in):** to share the skills with collaborators via git
-(clone → works in Codex with zero per-user install), pass `--codex-in-repo` so they
-land in `.agents/skills/`, and commit them.
+In a new chat, invoke `$changeflow:changeflow-init` to scaffold a project or
+`$changeflow:change-design` to start a change. The plugin ships all 12 skills.
+If you previously installed standalone copies in `~/.agents/skills/`,
+`~/.codex/skills/`, or a project's `.agents/skills/`, move **only** the
+ChangeFlow copies you no longer use outside those directories after verifying
+the namespaced skills. Keep copies with your own edits for reference.
+
+**Standalone option.** From a clone, run
+`bash scripts/init.sh "$PWD" /path/to/your-repo --tools codex` to scaffold the
+project and install user-level skills. Add `--codex-in-repo` to vendor the skills.
+Standalone skills use names such as `$change-design` and follow the clone's version.
+
+### Antigravity
+
+Install the plugin directly from GitHub (or from a local clone):
+
+```bash
+agy plugin install https://github.com/LaoYang1994/ChangeFlow
+# or from a local clone:
+agy plugin install /path/to/ChangeFlow
+```
 
 ---
 
 ## Quick start
 
-In your project:
+In Claude Code, run this in your project (in Codex use `$changeflow:changeflow-init`):
 
 ```
 /changeflow-init
 ```
 
 It asks which tool(s) to set up (Claude / Codex / both), scaffolds the `docs/`
-structure + `AGENTS.md` (+ `CLAUDE.md` for Claude), installs the chosen tool's
-commands (Codex skills go user-level into `~/.agents/skills/` by default — your repo
-stays clean) — and, **on an existing codebase, explores the code and drafts
+structure + `AGENTS.md` (+ `CLAUDE.md` for Claude), uses the installed Codex marketplace skills when invoked from that plugin — and, **on an existing codebase, explores the code and drafts
 `docs/PROJECT.md`** from what's actually there (proposing `CONCEPTS`/`CONTRACTS`
 seeds to confirm). You can scope the exploration, e.g.
 `/changeflow-init the perception module`.
@@ -216,8 +225,14 @@ under e.g. `.githooks/` and run `git config core.hooksPath .githooks`.
 `commands/*.md` is the single source of truth. The Codex skills are **generated**
 from it by `scripts/sync-codex.py` (which rewrites Claude's `$ARGUMENTS`
 placeholder for Codex and marks `change-*` skills explicit-invocation-only via `agents/openai.yaml`,
-since ChangeFlow is human-initiated) — installed user-level into `~/.agents/skills/`
-by default, or vendored into a repo's `.agents/skills/` with `--codex-in-repo`.
+since ChangeFlow is human-initiated). The marketplace ships generated files in
+`codex/skills/`. Maintainers regenerate them when editing a command:
+
+```bash
+python3 scripts/sync-codex.py commands codex/skills --plugin --force --prune
+python3 scripts/lint.py
+```
+
 `CLAUDE.md` imports `AGENTS.md` via `@AGENTS.md`; Codex reads `AGENTS.md` natively.
 
 ## Repository layout (this plugin)
@@ -227,6 +242,9 @@ by default, or vendored into a repo's `.agents/skills/` with `--codex-in-repo`.
 ├── .claude-plugin/
 │   ├── plugin.json         # plugin manifest
 │   └── marketplace.json    # single-plugin marketplace catalog
+├── .codex-plugin/plugin.json        # Codex manifest using the packaged skills
+├── .antigravity-plugin/plugin.json  # Antigravity manifest using the packaged skills
+├── codex/skills/           # packaged, generated skills (Codex & Antigravity)
 ├── commands/               # canonical Claude slash commands (source of truth)
 ├── templates/              # bootstrap docs (AGENTS/CLAUDE/PROJECT/CONCEPTS/CONTRACTS/WORKFLOW)
 ├── scripts/

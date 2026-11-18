@@ -7,7 +7,7 @@ Cut a new ChangeFlow plugin version cleanly.
 When shipping a versioned release.
 
 ## Steps
-1. Bump `version` in **both** `.claude-plugin/plugin.json` and the plugin entry in
+1. Bump `version` in `.codex-plugin/plugin.json`, `.antigravity-plugin/plugin.json`, `.claude-plugin/plugin.json`, and the plugin entry in
    `.claude-plugin/marketplace.json` — they must agree.
 2. Update `README.md` / CHANGELOG if present.
 3. Run `python3 scripts/lint.py` and `claude plugin validate . --strict` — both must pass.

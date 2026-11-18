@@ -11,7 +11,9 @@ Target directory (optional): $ARGUMENTS — defaults to the current directory.
 Ask the user which tool(s) to set up, **defaulting to the tool you're running in**:
 **Claude Code / Codex / both.** If the user already named a tool (in the arg or their message), honor it and skip the question. If a tool is already set up here, just offer to add the missing one — `init.sh` is idempotent and won't clobber.
 
-If **Codex** is chosen, also ask where its skills go:
+When invoked from the **Codex marketplace plugin**, use its bundled skills. Pass `--codex-marketplace` for Codex or both, or `--codex-in-repo` if the user explicitly asks to vendor skills. Skip the skills-location question in this case.
+
+When setting up Codex from Claude Code, honor an existing Codex marketplace install with `--codex-marketplace`. For standalone Codex skills, ask where to install them:
 - **user-level** (`~/.agents/skills/`, default) — for you, across all your repos; nothing is added to this repo.
 - **vendored in repo** (`.agents/skills/`) — committed so collaborators get the skills via git.
 
@@ -19,9 +21,9 @@ If **Codex** is chosen, also ask where its skills go:
 Run the init script with the chosen flags:
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/init.sh" "${CLAUDE_PLUGIN_ROOT}" "<target-dir>" \
-  --tools <claude|codex|both> [--codex-in-repo]
+  --tools <claude|codex|both> [--codex-in-repo | --codex-marketplace]
 ```
-It always writes the `docs/` structure + `AGENTS.md` + `docs/{PROJECT,CONCEPTS,CONTRACTS}.md` + the INDEX files (never overwriting). `--tools claude` adds `CLAUDE.md`; `--tools codex` installs the Codex skills (user-level by default, or into `.agents/skills/` with `--codex-in-repo`). Report what was created vs. skipped.
+It always writes the `docs/` structure + `AGENTS.md` + `docs/{PROJECT,CONCEPTS,CONTRACTS}.md` + the INDEX files (never overwriting). `--tools claude` adds `CLAUDE.md`; `--tools codex` uses the installed plugin with `--codex-marketplace`, or installs standalone skills at the chosen location. Report what was created vs. skipped.
 
 ## Step 3 — Adopt an existing codebase (only if there is real code)
 A blank `PROJECT.md` is useless on an existing project. If the repo already has source:
@@ -35,9 +37,10 @@ Remind the user:
 - review the drafted `PROJECT.md`; confirm the proposed CONCEPTS/CONTRACTS;
 - add their real hard rules under **Critical rules** in `AGENTS.md`;
 - **Claude:** each user installs the changeflow plugin (commands come from the plugin, not the repo); accept the workspace trust dialog.
-- **Codex (user-level):** collaborators install ChangeFlow into their own `~/.agents/skills/` the same way. **Codex (vendored):** commit `.agents/skills/` so collaborators get it via git.
+- **Codex (marketplace):** collaborators install `changeflow@laoyang1994` from the marketplace.
+- **Codex (standalone user-level):** collaborators install ChangeFlow into their own `~/.agents/skills/` the same way. **Codex (vendored):** commit `.agents/skills/` so collaborators get it via git.
 
 ## Notes
-- The repo only ever holds `AGENTS.md` + `docs/` (+ `CLAUDE.md` if Claude, + `.agents/skills/` only if vendored). Command sets live per-user (`~/.claude/skills/`, `~/.agents/skills/`) unless vendored.
+- The repo only ever holds `AGENTS.md` + `docs/` (+ `CLAUDE.md` if Claude, + `.agents/skills/` only if vendored). Marketplace installations load commands from the installed plugin.
 - To add the other tool later, just re-run this command for it (idempotent).
-- Refresh Codex skills after the plugin updates: `sync-codex.py <commands> <dest> --force`.
+- Refresh standalone Codex skills after the plugin updates: `sync-codex.py <commands> <dest> --force`.

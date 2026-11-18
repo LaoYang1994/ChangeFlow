@@ -6,8 +6,8 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
 ## Source of truth
 ### Rules
 - `commands/*.md` is the single source of truth for command behavior.
-- `.agents/skills/` are GENERATED from `commands/` by `scripts/sync-codex.py` —
-  never hand-edit; regenerate with `--force` after changing a command.
+- Packaged `codex/skills/` and standalone `.agents/skills/` are GENERATED from `commands/` by `scripts/sync-codex.py` —
+  never hand-edit; regenerate the packaged tree with `--plugin --force --prune` after changing a command.
 - Per-change templates (design/plan/review/validation) are embedded inside their
   command bodies, NOT referenced from `templates/` — Codex skills can't read the
   plugin root.
@@ -34,14 +34,13 @@ discovered. (Short, high-frequency subset is mirrored in `AGENTS.md`.)
 ### Rules
 - `init.sh` never overwrites existing files (`copy_if_missing`); it preflights
   `python3` only when Codex skills are requested.
-- `sync-codex.py` rewrites the `$ARGUMENTS` placeholder and `/cmd` mentions (→ `$cmd`) for Codex and skips
-  `changeflow-init` (Claude-only scaffolder).
+- `sync-codex.py` rewrites the `$ARGUMENTS` placeholder and `/cmd` mentions (→ `$cmd`) for standalone installs. With `--plugin` it qualifies references with the plugin namespace and includes `changeflow-init` with a package-relative root.
 - Generated skills carry a `GENERATED` header; `sync-codex.py --prune` removes only
   skills with that header whose command no longer exists.
 - `init.sh --tools claude|codex|both`: always writes the tool-agnostic `AGENTS.md`
   + docs/; adds `CLAUDE.md` only for Claude; installs Codex skills user-level
   (`~/.agents/skills/`) by default, or into `.agents/skills/` with `--codex-in-repo`.
-  A repo never gets a tool's command tree unless explicitly vendored.
+  The marketplace initializer passes `--codex-marketplace` to scaffold with the skills already installed by the host. A repo only gets a command tree when explicitly vendored.
 
 ## Docs & tooling
 ### Rules

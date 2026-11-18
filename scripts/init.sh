@@ -2,7 +2,7 @@
 # Scaffold ChangeFlow into a target repo, and (optionally) install its Codex skills.
 #
 # Usage:
-#   init.sh <plugin-root> [target-dir] [--tools claude|codex|both] [--codex-in-repo] [--force]
+#   init.sh <plugin-root> [target-dir] [--tools claude|codex|both] [--codex-in-repo | --codex-marketplace] [--force]
 #   --force only regenerates Codex skills that already exist; docs/ and AGENTS.md
 #   are never overwritten.
 #
@@ -16,16 +16,18 @@
 #   --tools both    → both (default).
 set -euo pipefail
 
-PLUGIN_ROOT="${1:?usage: init.sh <plugin-root> [target-dir] [--tools claude|codex|both] [--codex-in-repo] [--force]}"
+PLUGIN_ROOT="${1:?usage: init.sh <plugin-root> [target-dir] [--tools claude|codex|both] [--codex-in-repo | --codex-marketplace] [--force]}"
 shift || true
 
 TARGET="$PWD"
 TOOLS="both"
 CODEX_IN_REPO=0
+CODEX_MARKETPLACE=0
 FORCE=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --tools) TOOLS="${2:?--tools needs a value}"; shift 2 ;;
+    --codex-marketplace) CODEX_MARKETPLACE=1; shift ;;
     --codex-in-repo) CODEX_IN_REPO=1; shift ;;
     --force) FORCE="--force"; shift ;;
     --*) echo "unknown flag: $1" >&2; exit 1 ;;
@@ -41,7 +43,11 @@ case "$TOOLS" in
   *) echo "error: --tools must be claude|codex|both (got '$TOOLS')" >&2; exit 1 ;;
 esac
 
-if [ "$want_codex" = 1 ] && ! command -v python3 >/dev/null 2>&1; then
+if [ "$CODEX_MARKETPLACE" = 1 ] && [ "$CODEX_IN_REPO" = 1 ]; then
+  echo "error: choose marketplace or vendored Codex skills" >&2; exit 1
+fi
+
+if [ "$want_codex" = 1 ] && [ "$CODEX_MARKETPLACE" = 0 ] && ! command -v python3 >/dev/null 2>&1; then
   echo "error: python3 is required to generate Codex skills. Install it, or use --tools claude." >&2
   exit 1
 fi
@@ -77,7 +83,7 @@ if [ "$want_claude" = 1 ]; then
   copy_if_missing "$PLUGIN_ROOT/templates/CLAUDE.md" "$TARGET/CLAUDE.md"
 fi
 
-if [ "$want_codex" = 1 ]; then
+if [ "$want_codex" = 1 ] && [ "$CODEX_MARKETPLACE" = 0 ]; then
   if [ "$CODEX_IN_REPO" = 1 ]; then
     codex_dest="$TARGET/.agents/skills"
     echo "[codex]  vendored in this repo — commit it so collaborators get the skills via git"
@@ -103,6 +109,8 @@ fi
 if [ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 1 ]; then
   echo "  - Codex (vendored): commit .agents/skills/ so collaborators get the skills."
 fi
-if [ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 0 ]; then
+if [ "$want_codex" = 1 ] && [ "$CODEX_MARKETPLACE" = 1 ]; then
+  echo "  - Codex: use the skills in the installed ChangeFlow plugin."
+elif [ "$want_codex" = 1 ] && [ "$CODEX_IN_REPO" = 0 ]; then
   echo "  - Codex (user-level): collaborators install ChangeFlow into their own ~/.agents/skills the same way."
 fi
